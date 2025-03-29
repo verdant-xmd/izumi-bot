@@ -148,15 +148,17 @@ async (message, match, client) => {
     message.send(str);
 });
 
+
 izumi({
     pattern: "tag ?(.*)",
     fromMe: false,
     onlyGroup: true,
-    desc: "mention all users in group",
+    desc: "Mention all users in group",
     type: "group",
 },
 async (message, match) => {
     if (!(await checkPermissions(message))) return;
+    
     const { participants } = await message.client.groupMetadata(message.jid);
     let teks = "";
     let mentions = [];
@@ -164,55 +166,37 @@ async (message, match) => {
     if (match === "admin" || match === "admins") {
         let admins = participants.filter(v => v.admin !== null).map(v => v.id);
         for (let admin of admins) {
-            teks += `@${admin.split('@')[0]}\n`;
+            teks += `彡 @${admin.split('@')[0]}\n`;
         }
         mentions = admins;
-        await message.sendMessage(message.jid, teks.trim(), {
-            mentions: mentions
-        });
+        await message.sendMessage(message.jid, teks.trim(), { mentions });
         return;
     } else if (match === "all") {
         for (let mem of participants) {
-            teks += `@${mem.id.split("@")[0]}\n`;
+            teks += `彡 @${mem.id.split("@")[0]}\n`;
         }
         mentions = participants.map(a => a.id);
-        await message.sendMessage(message.jid, teks.trim(), {
-            mentions: mentions
-        });
+        await message.sendMessage(message.jid, teks.trim(), { mentions });
         return;
     }
 
     if (match.trim()) {
         for (let mem of participants) {
-            teks += `@${mem.id.split("@")[0]}\n`;
+            teks += `彡 @${mem.id.split("@")[0]}\n`;
         }
         mentions = participants.map(a => a.id);
-        await message.sendMessage(message.jid, match.trim() + "\n" + teks.trim(), {
-            mentions: mentions
-        });
+        await message.sendMessage(message.jid, `${match.trim()}\n${teks.trim()}`, { mentions });
     }
-
-    var target = message.jid;
-    if (match && /[0-9]+(-[0-9]+|)(@g.us|@s.whatsapp.net)/g.test(match)) {
-        target = [...match.match(/[0-9]+(-[0-9]+|)(@g.us|@s.whatsapp.net)/g)][0];
-    }
-
-    var group = await message.client.groupMetadata(target);
-    var jids = [];
-    group.participants.map(user => {
-        jids.push(user.id.replace('c.us', 's.whatsapp.net'));
-    });
 
     if (message.quoted) {
-        await message.forwardMessage(target, message.quoted.data, {
+        let jids = participants.map(user => user.id.replace('c.us', 's.whatsapp.net'));
+        await message.forwardMessage(message.jid, message.quoted.data, {
             detectLinks: true,
-            contextInfo: {
-                mentionedJid: jids
-            }
+            contextInfo: { mentionedJid: jids }
         });
     }
 });
-
+   
 izumi({
     pattern: "hidetag ?(.*)",
     fromMe: false,
