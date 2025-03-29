@@ -1,6 +1,6 @@
 const { izumi } = require("../lib"); const Jimp = require("jimp"); const { S_WHATSAPP_NET } = require("@adiwajshing/baileys");
 
-izumi( { pattern: "fullpp", fromMe: true, desc: "Set full profile picture", type: "profile", }, async (message) => { if (!message.quoted || !message.quoted.image) return await message.reply("Reply to an image to set as profile picture");
+izumi( { pattern: "fullpp", fromMe: true, desc: "Set full profile picture", type: "user", }, async (message) => { if (!message.quoted || !message.quoted.image) return await message.reply("Reply to an image to set as profile picture");
 
 try {
   let imgBuffer = await message.quoted.download();
