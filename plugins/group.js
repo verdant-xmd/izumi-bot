@@ -30,6 +30,28 @@ async (message, match) => {
     });
 });
 
+izumi(
+  {
+    pattern: "gpp",
+    fromMe: true,
+    desc: "Change group profile picture.",
+  },
+  async (message) => {
+    if (!message.quoted) {
+      return await message.reply("Reply to an image to set it as the group profile picture.");
+    }
+
+    try {
+      let media = await message.quoted.download();
+      await message.client.updateProfilePicture(message.jid, { url: media });
+      await message.reply("Group profile picture updated successfully.");
+    } catch (error) {
+      await message.reply("Failed to update profile picture.");
+      console.error(error);
+    }
+  }
+);
+
 izumi({
     pattern: "demote ?(.*)",
     fromMe: false,
