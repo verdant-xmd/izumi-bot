@@ -10,6 +10,7 @@ function convertToBool(text, fault = 'true') {
 
 const toBool = (x) => (x && x.toLowerCase() === 'true') || false;
 global.apiUrl = 'https://api.maskser.me/'
+global.eypzApi = 'https://api.eypz.infy.uk/'
 
 
 const DATABASE_URL = process.env.DATABASE_URL === undefined ? './database.db' : process.env.DATABASE_URL;
