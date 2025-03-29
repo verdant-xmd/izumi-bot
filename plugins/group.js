@@ -34,9 +34,15 @@ izumi(
   {
     pattern: "gpp",
     fromMe: true,
+    onlyGroup: true,
+    type: "group", 
     desc: "Change group profile picture.",
   },
   async (message) => {
+    if (!(await checkPermissions(message))) {
+      return await message.reply("You don't have permission to change the group profile picture.");
+    }
+
     if (!message.quoted) {
       return await message.reply("Reply to an image to set it as the group profile picture.");
     }
