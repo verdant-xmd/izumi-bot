@@ -140,6 +140,7 @@ izumi(
   {
     pattern: "update$",
     fromMe: true,
+    dontAddCommandList: true, 
     desc: "Checks for updates.",
   },
   async (message) => {
@@ -201,17 +202,32 @@ izumi({
 await message.send("_rebooting_");
 return require('pm2').restart('index.js');
 });
-const value = ["99000","88000","77000","660000","55000","44000","33000","22000","11000","9999","999","99"];
+
+const value = [
+    "99000", "88000", "77000", "660000", "55000", 
+    "44000", "33000", "22000", "11000", "9999", "999", "99"
+];
+
 izumi({
-    pattern: "sc$",
+    pattern: "repo$",
     fromMe: mode,
     desc: "Izumi",
     type: "info",
 }, async (message, match, client) => {
-    var amount = value[Math.floor(Math.random() * value.length)];
+    // Generate a random amount
+    const amount = value[Math.floor(Math.random() * value.length)];
     const amountInPaise = parseInt(amount, 10) * 1000;
-    const cap = "Iᴢᴜᴍɪ-ᴠ3\n\nRᴇᴘᴏ:https://github.com/sataniceypz/Izumi-v3\n\nSᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ:https://chat.whatsapp.com/KHvcGD7aEUo8gPocJsYXZe\n\nLɪᴠᴇ Uꜱᴇʀꜱ Cᴏᴜɴᴛ:https://users.maskser.me";
 
+    // Message caption with separators
+    const caption = 
+        "--------------------------------------\n" +
+        "Izumi-md\n\n" +
+        "Repo: https://github.com/Akshay-Eypz/izumi-bot\n\n" +
+        "WhatsApp Channel: https://whatsapp.com/channel/0029Vaf2tKvGZNCmuSg8ma2O\n\n" +
+        "Telegram Group: https://t.me/izumi_support\n" +
+        "--------------------------------------";
+
+   
     await message.client.relayMessage(message.jid, {
         requestPaymentMessage: {
             currencyCodeIso4217: 'INR',
@@ -219,17 +235,16 @@ izumi({
             requestFrom: message.sender,
             noteMessage: {
                 extendedTextMessage: {
-                    text: cap,
+                    text: caption,
                     contextInfo: {
-                        externalAdReply: {
-                            showAdAttribution: true
-                        }
+                        externalAdReply: { showAdAttribution: true }
                     }
                 }
             }
         }
     }, { quoted: message.quoted });
 });
+
 izumi({
   pattern: 'plugin ?(.*)',
   fromMe: true,
@@ -313,41 +328,3 @@ izumi({
     }
   }
 );
-izumi({
-    pattern: "support",
-    fromMe: mode,
-    desc: "Izumi Support",
-    type: "info",
-}, async (message, match, client) => {
-    try {
-        const vcard = 'BEGIN:VCARD\n' +
-        'VERSION:3.0\n' +
-        'N:;;;;\n' +
-        'FN:Eypz God\n' +
-        'TEL;type=Mobile;waid=917902624272:+91 79026 24272\n' +
-        "X-WA-BIZ-DESCRIPTION:Izumi, a multi-device WhatsApp bot.\nwa.me/917902624272" +
-        'X-WA-BIZ-NAME:Eypz God\n' +
-        'END:VCARD';
-
-        await client.sendMessage(message.jid, {
-            contacts: {
-                contacts: [{ vcard }]
-            },
-            contextInfo: { 
-                externalAdReply: {
-                    title: "Iᴢᴜᴍɪ Sᴜᴘᴘᴏʀᴛ🧚‍♂️",
-                    body: "Eypz",
-                    sourceUrl: "https://chat.whatsapp.com/KHvcGD7aEUo8gPocJsYXZe",
-                    mediaUrl: "https://chat.whatsapp.com/KHvcGD7aEUo8gPocJsYXZe",
-                    mediaType: 1,
-                    showAdAttribution: true,
-                    renderLargerThumbnail: false,
-                    thumbnailUrl: "https://i.imgur.com/UriXD0j.jpeg"
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error occurred:', error);
-        await client.sendMessage(message.jid, { text: '```Error occurred while executing the command.```' });
-    }
-});
