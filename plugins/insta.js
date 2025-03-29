@@ -1,6 +1,7 @@
 const { izumi, mode } = require("../lib");
 const fetch = require("node-fetch");
-
+const config = require("../config");
+const caption = config.CAPTION;
 izumi({
     pattern: 'insta ?(.*)',
     fromMe: mode,
@@ -23,7 +24,7 @@ izumi({
 
         await client.sendMessage(message.jid, {
             video: { url: dl },
-            caption: "Here is your video",
+            caption: caption,
             mimetype: "video/mp4",
         }, { quoted: message.data });
     } catch (error) {
