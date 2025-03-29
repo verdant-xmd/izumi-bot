@@ -145,23 +145,20 @@ izumi(
   async (message) => {
     await git.fetch();
     var commits = await git.log([Config.BRANCH + "..origin/" + Config.BRANCH]);
-    if (commits.total === 0) {
-      await message.reply("_Already on the latest version_");
-    } else {
-      var updates = "* Update Available\n\n\n Changes:\n```";
-      commits["all"].map((commit) => {
-        updates +=
-          "🔹 [" +
-          commit.date.substring(0, 10) +
-          "]: " +
-          commit.message +
-          " <" +
-          commit.author_name +
-          ">\n";
-      });
 
-      await message.reply(updates + "```");
+    if (commits.total === 0) {
+      await message.reply("Already on the latest version.");
+      return;
     }
+
+    var updates = "Update Available\n\nChanges:\n";
+    updates += "--------------------------------------\n";
+    updates += commits.all
+      .map(commit => `[${commit.date.substring(0, 10)}] ${commit.message} - ${commit.author_name}`)
+      .join("\n");
+    updates += "\n--------------------------------------";
+
+    await message.reply(updates);
   }
 );
 
