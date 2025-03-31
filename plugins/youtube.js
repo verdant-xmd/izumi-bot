@@ -1,4 +1,4 @@
-const { izumi, mode } = require("../lib");
+const { izumi, mode, searchAndSendYouTubeOptions } = require("../lib");
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 
@@ -169,4 +169,13 @@ izumi({
       await message.reply('*No results found for that query.*');
     }
   });
+});
+
+izumi({
+    pattern: "play ?(.*)",
+    fromMe: mode,
+    desc: "Search YouTube and provide quick options.",
+    type: "downloader",
+}, async (message, match) => {
+    await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match);
 });
