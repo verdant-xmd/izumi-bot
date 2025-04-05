@@ -1,6 +1,6 @@
 const { izumi,mode, isAdmin ,parsedJid} = require("../lib");
-const { downloadContentFromMessage } = require('@adiwajshing/baileys');
-const config = require('../config');
+const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+const config = require('../config'); // adjust the path if needed
 
 let autoStatusEnabled = false;
 
@@ -11,13 +11,12 @@ izumi({
   desc: 'Check auto status view status',
   type: 'automation'
 }, async (message, match, client) => {
-
   if (config.AUTO_STATUS_VIEW && !autoStatusEnabled) {
     autoStatusEnabled = true;
 
     client.ev.on('messages.upsert', async ({ messages }) => {
       const msg = messages[0];
-      if (!msg || !msg.key || msg.key.remoteJid !== 'status@broadcast') return;
+      if (!msg || msg.key.remoteJid !== 'status@broadcast') return;
 
       try {
         await client.readMessages([msg.key]);
@@ -38,13 +37,11 @@ izumi({
       }
     });
 
-    console.log('✅ Auto status viewer is running.');
-  }
-
-  if (config.AUTO_STATUS_VIEW) {
-    return await message.reply('Auto status viewer is *enabled* from config.');
+    await message.reply('✅ Auto status viewer is *enabled* and running.');
+  } else if (config.AUTO_STATUS_VIEW) {
+    await message.reply('✅ Auto status viewer is *already running*.');
   } else {
-    return await message.reply('Please enable *AUTO_STATUS_VIEW* in environment variables to activate auto status view.');
+    await message.reply('❌ Auto status viewer is *disabled* in config.\n\nSet `AUTO_STATUS_VIEW=true` to enable it.');
   }
 });
 izumi(
