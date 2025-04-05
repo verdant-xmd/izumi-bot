@@ -1,5 +1,5 @@
 const { izumi,mode, isAdmin ,parsedJid} = require("../lib");
-const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+const { downloadContentFromMessage } = require('@adiwajshing/baileys');
 const config = require('../config'); // adjust the path if needed
 
 let autoStatusEnabled = false;
