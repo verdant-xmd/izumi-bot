@@ -1,5 +1,5 @@
 const { izumi,mode, isAdmin ,parsedJid} = require("../lib");
-> const { downloadContentFromMessage } = require('@adiwajshing/baileys');
+const { downloadContentFromMessage } = require('@adiwajshing/baileys');
 const config = require('../config');
 
 let autoStatusEnabled = false;
