@@ -10,7 +10,7 @@ izumi({
   dontAddCommandList: true,
   desc: 'Check auto status view status',
   type: 'automation'
-}, async (message) => {
+}, async (message, client) => {
   if (config.AUTO_STATUS_VIEW) {
     return await message.reply('Auto status viewer is *enabled* from config.');
   } else {
