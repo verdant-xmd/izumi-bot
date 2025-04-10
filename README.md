@@ -48,7 +48,7 @@ Izumi - Simple whatsapp Multi Device whatsapp bot.
    cd izumi-bot
 4. Configuration
    ```
-   nono config.js
+   nano config.js
 
    ```
    edit your details
