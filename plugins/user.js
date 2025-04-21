@@ -1,7 +1,6 @@
 const { izumi,mode, isAdmin, formatTime,parsedJid} = require("../lib");
 const { downloadContentFromMessage } = require('@adiwajshing/baileys');
 const config = require('../config'); // adjust the path if needed
-const config = require("../config");
 izumi(
   {
     pattern: 'block ?(.*)',
