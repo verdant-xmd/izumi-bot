@@ -12,7 +12,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        { 
             video: { url: gif+"kiss" },
             mimeType: "video/mp4",
             gifPlayback: true,
@@ -34,7 +34,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        {   
             video: { url: gif+"angry" },
             mimeType: "video/mp4",
             gifPlayback: true,
@@ -56,7 +56,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        {  
             video: { url: gif+"blush" },
             mimeType: "video/mp4",
             gifPlayback: true,
@@ -78,7 +78,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        {   
             video: { url: gif+"dance" },
             mimeType: "video/mp4",
             gifPlayback: true,
@@ -100,7 +100,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        {   
             video: { url: gif+"hug" },
             mimeType: "video/mp4",
             gifPlayback: true,
@@ -122,7 +122,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        {   
             video: { url: gif+"laugh" },
             mimeType: "video/mp4",
             gifPlayback: true,
@@ -144,7 +144,7 @@ izumi({
     const jidString = Array.isArray(jid) ? jid[0] : jid;
     await message.client.sendMessage(
         message.jid,
-        {.   
+        {   
             video: { url: gif+"sleep" },
             mimeType: "video/mp4",
             gifPlayback: true,
