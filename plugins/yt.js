@@ -147,7 +147,7 @@ izumi({
     desc: "Search YouTube and provide quick options.",
     type: "downloader",
 }, async (message, match) => {
-    await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match);
+    await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match, message.data);
 });
 izumi({
     pattern: 'yts ?(.*)',
