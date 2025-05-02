@@ -13,17 +13,20 @@ izumi({
   }
 
   try {
-    const res = await getJson("https://downloaders-sandy.vercel.app/api/v1/yta?query=" + match, {
+    const { videos } = await yts(match);
+    const firstVideo = videos[0];
+    const url = firstVideo.url;
+    const res = await getJson("https://api-aswin-sparky.koyeb.app/api/downloader/ytv?url=" + url, {
       headers: { "User-Agent": "Mozilla/5.0" }
     });
 
-    if (!res?.data?.downloadUrl|| !res?.data?.title) {
+    if (!res?.data?.dl || !res?.data?.title) {
       return message.reply("Download failed.");
     }
 
     await message.reply(`_Downloading ${res.data.title}_`);
 
-    const video = await axios.get(res.data.downloadUrl, { responseType: 'arraybuffer' });
+    const video = await axios.get(res.data.dl, { responseType: 'arraybuffer' });
 
     await client.sendMessage(message.jid, {
       audio: Buffer.from(video.data),
