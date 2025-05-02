@@ -150,7 +150,7 @@ izumi({
     await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match);
 });
 izumi({
-    pattern: 'ytsearch ?(.*)',
+    pattern: 'yts ?(.*)',
     fromMe: true,
     desc: 'Search YouTube videos',
     type: 'search'
