@@ -28,7 +28,7 @@ module.exports = {
   WARN_COUNT: process.env.WARN_COUNT  || '3',
   AUTO_STATUS_VIEW: toBool(process.env.AUTO_STATUS_VIEW) || false,
   SESSION_ID: process.env.SESSION_ID || "izumi session",
-  MENU_URL: process.env.MENU_URL || "https://files.catbox.moe/hkqhic.jpeg",
+  MENU_URL: process.env.MENU_URL || "https://cdn.eypz.ct.ws/s?p=documents/file_88.jpg",
   CAPTION: process.env.CAPTION || "Made with 🤍",
   READ_MSG: toBool(process.env.READ_MSG),
   OWNER_NAME: process.env.OWNER_NAME || "Eʏᴘᴢ",
