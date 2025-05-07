@@ -1,37 +1,40 @@
-const { izumi, mode, isUrl, getJson, parsedUrl } = require("../lib");
+const { izumi, mode, getJson } = require("../lib");
 const config = require("../config");
+
 izumi(
   {
     pattern: "pinterest ?(.*)",
     fromMe: mode,
-    desc: "Download pinterest videos",
+    desc: "Download Pinterest videos or images",
     type: "downloader",
   },
   async (message, match) => {
     try {
-      match = match || message.reply_message.text;
+      match = match || message.reply_message.text || message.quoted?.text;
 
       if (!match) {
-        await message.reply("Please provide a URL");
+        await message.reply("Please provide a Pinterest URL", {}, "text", message);
         return;
       }
 
-      const result = await getJson(eypzApi + `pin?url=${match}`);
-      if (!result || !result.media_urls) {
-        await message.reply("Invalid response from the API");
+      const result = await getJson(`https://eypz.koyeb.app/api/pin?url=${match}`);
+      if (!result || result.status !== "success" || !result.media_urls) {
+        await message.reply("Invalid response from the API", {}, "text", message);
         return;
       }
-      const urlMp4 = Object.values(result.media_urls).find(url => url.endsWith('.mp4'));
-      
-      if (!urlMp4) {
-        await message.reply("No  media found");
+
+      const media = result.media_urls.video || result.media_urls.image;
+
+      if (!media) {
+        await message.reply("No media found in the provided URL", {}, "text", message);
         return;
       }
-      await message.sendFromUrl(urlMp4);
+
+      await message.sendFromUrl(media, { quoted: message.data });
 
     } catch (error) {
       console.error(error);
-      await message.reply("An error occurred while processing your request.");
+      await message.reply("An error occurred while processing your request.", {}, "text", message);
     }
   }
 );
