@@ -57,7 +57,7 @@ izumi({
       return await message.reply('Upload succeeded, but no file ID returned.');
     }
 
-    const { data } = await axios.get(`https:id.eypz.ct.ws/getFileUrl?fileId=${fileId}`);
+    const { data } = await axios.get(`https:cdn.eypz.ct.ws/getFileUrl?fileId=${fileId}`);
 
     await message.reply(data.streamUrl || 'URL not found.');
   } catch (err) {
