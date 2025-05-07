@@ -27,16 +27,21 @@ izumi({
       ext = 'mp4';
     } else {
       mediaBuffer = await message.quoted.download('buffer');
-      const hash = crypto.createHash('sha256').update(mediaBuffer).digest('hex');
-      const tempPath = `/tmp/${hash}`;
-      fs.writeFileSync(tempPath, mediaBuffer);
 
-      const type = await fileType.fromFile(tempPath);
-      ext = type && ['jpg', 'jpeg', 'png', 'mp4', 'mp3'].includes(type.ext)
-        ? (type.ext === 'jpeg' ? 'jpg' : type.ext)
-        : 'bin';
+      if (message.quoted.image) {
+        ext = 'png';
+      } else {
+        const hash = crypto.createHash('sha256').update(mediaBuffer).digest('hex');
+        const tempPath = `/tmp/${hash}`;
+        fs.writeFileSync(tempPath, mediaBuffer);
 
-      fs.unlinkSync(tempPath);
+        const type = await fileType.fromFile(tempPath);
+        ext = type && ['jpg', 'jpeg', 'png', 'mp4', 'mp3'].includes(type.ext)
+          ? (type.ext === 'jpeg' ? 'jpg' : type.ext)
+          : 'bin';
+
+        fs.unlinkSync(tempPath);
+      }
     }
 
     const hash = crypto.createHash('sha256').update(mediaBuffer).digest('hex');
