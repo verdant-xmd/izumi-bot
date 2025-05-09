@@ -17,7 +17,7 @@ izumi(
         return;
       }
 
-      const result = await getJson(`https://eypz.koyeb.app/api/pin?url=${match}`);
+      const result = await getJson(`https://eypz.koyeb.app/api/dl/pin?url=${match}`);
       if (!result || result.status !== "success" || !result.media_urls) {
         await message.reply("Invalid response from the API", {}, "text", message);
         return;
