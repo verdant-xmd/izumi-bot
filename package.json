@@ -1,6 +1,6 @@
 {
   "name": "izumi-bot",
-  "version": "3.6.4",
+  "version": "3.5.7",
   "description": "Izumi simple multi device WhatsApp Bot.",
   "main": "./index.js",
   "scripts": {
@@ -42,6 +42,7 @@
     "google-tts-api": "^0.0.6",
     "got": "^11.8.5",
     "imgbb-uploader": "^1.5.1",
+    "stream": "^0.0.3",
     "jimp": "^0.16.13",
     "jsdom": "^26.0.0",
     "jsqr": "^1.4.0",
