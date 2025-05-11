@@ -10,7 +10,7 @@ izumi({
   desc: "Download YouTube videos ",
   type: "downloader",
 }, async (message, match, client) => {
-  if (!match) return await message.reply("Please provide a search query or url.");
+  if (!match) return await message.reply("Please provide a search query.");
 
   try {
     const { videos } = await yts(match);
@@ -84,25 +84,20 @@ izumi({
   desc: "Download YouTube videos ",
   type: "downloader",
 }, async (message, match, client) => {
-  if (!match) return await message.reply("Please provide a search query or url.");
+  if (!match) return await message.reply("Please provide a url.");
 
   try {
-    const { videos } = await yts(match);
-    if (!videos.length) return await message.reply("No videos found!");
-    const video = videos[0];
-
-    await message.reply(`_*Downloading: ${video.title}...*_`);
-
-    const apiUrl = `https://eypz.koyeb.app/api/dl/ytv?url=${encodeURIComponent(video.url)}&quality=720&apikey=akshay-eypz`;
+    const apiUrl = `https://eypz.koyeb.app/api/dl/ytv?url=${encodeURIComponent(match)}&quality=720&apikey=akshay-eypz`;
     const { data } = await axios.get(apiUrl, { 
       headers: { 
         'Cache-Control': 'no-cache',
         'User-Agent': 'WhatsAppBot/1.0'
       }
     });
-
     if (!data?.media_url) return await message.reply("Failed to get download link.");
 
+    await message.reply(`_*Downloading: ${data.title}...*_`);
+    
     const tempFile = `temp_${Date.now()}.mp4`;
     const finalFile = `final_${Date.now()}.mp4`;
 
@@ -125,20 +120,20 @@ izumi({
       );
     });
 
-    const imageBuffer = await axios.get(video.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
+    const imageBuffer = await axios.get(data.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
 
     await client.sendMessage(message.jid, {
       video: fs.readFileSync(finalFile),
       mimetype: 'video/mp4',
-      caption: `*${video.title}*`,
+      caption: `*${data.title}*`,
     }, { quoted: message.data });
     
     await client.sendMessage(message.jid, {
       document: fs.readFileSync(finalFile),
-      fileName: `${video.title}.mp4`,
+      fileName: `${data.title}.mp4`,
       mimetype: 'video/mp4',
-      caption: `*${video.title}*`,
+      caption: `*${data.title}*`,
       jpegThumbnail: jpegThumbnail
     }, { quoted: message.data });
 
@@ -232,13 +227,8 @@ izumi({
   if (!match) return await message.reply("Please provide a search query or url.");
 
   try {
-    const { videos } = await yts(match);
-    if (!videos.length) return await message.reply("No videos found!");
-    const video = videos[0];
-
-    await message.reply(`_*Downloading: ${video.title}...*_`);
-
-    const apiUrl = `https://eypz.koyeb.app/api/dl/yta?url=${encodeURIComponent(video.url)}&quality=128&apikey=akshay-eypz`;
+    
+    const apiUrl = `https://eypz.koyeb.app/api/dl/yta?url=${encodeURIComponent(match)}&quality=128&apikey=akshay-eypz`;
     const { data } = await axios.get(apiUrl, {
       headers: {
         'Cache-Control': 'no-cache',
@@ -248,6 +238,7 @@ izumi({
 
     if (!data?.media_url) return await message.reply("Failed to get audio link.");
 
+    await message.reply(`_*Downloading: ${data.title}...*_`);
     const tempFile = `temp_${Date.now()}.mp4`; // Usually .mp4 (audio stream)
     const finalFile = `final_${Date.now()}.mp3`;
 
@@ -268,20 +259,20 @@ izumi({
       });
     });
 
-    const imageBuffer = await axios.get(video.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
+    const imageBuffer = await axios.get(data.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
 
     await client.sendMessage(message.jid, {
       audio: fs.readFileSync(finalFile),
       mimetype: 'audio/mp4',
-      caption: `*${video.title}*`,
+      caption: `*${data.title}*`,
     }, { quoted: message.data });
     
     await client.sendMessage(message.jid, {
       document: fs.readFileSync(finalFile),
-      fileName: `${video.title}.mp3`,
+      fileName: `${data.title}.mp3`,
       mimetype: 'audio/mp3',
-      caption: `*${video.title}*`,
+      caption: `*${data.title}*`,
       jpegThumbnail: jpegThumbnail
     }, { quoted: message.data });
 
