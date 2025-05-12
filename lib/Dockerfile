@@ -1,11 +1,20 @@
-FROM quay.io/eypzgod/izumi:latest
+FROM node:lts-buster
 
-WORKDIR /root/bot/
+RUN apt-get update && \
+  apt-get install -y \
+  ffmpeg \
+  imagemagick \
+  webp && \
+  apt-get upgrade -y && \
+  npm i pm2 -g && \
+  rm -rf /var/lib/apt/lists/*
 
-EXPOSE 3000
+WORKDIR /app
 
-RUN git clone https://github.com/Akshay-Eypz/izumi-bot /root/bot/
+COPY ../package.json ../ecosystem.config.js ./
 
-RUN yarn install --network-concurrency 1
+RUN yarn install
 
-CMD ["npm", "start"]
+COPY ../ .
+
+CMD ["pm2-runtime", "ecosystem.config.js"]
