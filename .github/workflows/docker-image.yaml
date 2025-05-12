@@ -33,4 +33,4 @@ jobs:
           context: .
           file: ./lib/Dockerfile
           push: true
-          tags: ghcr.io/akshay-eypz/izumi-image:latest
+          tags: ghcr.io/akshay-eypz/izumi-md:latest
