@@ -67,3 +67,8 @@ Izumi - Simple whatsapp Multi Device whatsapp bot.
 [![Join us on Telegram](https://img.shields.io/badge/Join_Telegram-blue?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/izumi_support)
 
 <a href="https://whatsapp.com/channel/0029Vaf2tKvGZNCmuSg8ma2O"><img alt="WhatsApp" src="https://img.shields.io/badge/-Whatsapp%20Channel-white?style=for-the-badge&logo=whatsapp&logoColor=black"/></a>
+
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
