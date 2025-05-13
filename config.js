@@ -39,6 +39,7 @@ module.exports = {
   AUDIO_DATA: process.env.AUDIO_DATA || "Eʏᴘᴢ;Iᴢᴜᴍɪ-ᴍᴅ;https://cdn.eypz.ct.ws/url/08-05-25_09-55_6ijf.png",
   PROCESSNAME: process.env.PROCESSNAME || "Iᴢᴜᴍɪ-ᴍᴅ",
   AUTHOR: process.env.AUTHOR || "Eʏᴘᴢ",
+  PRESENCE: process.env.PRESENCE || "unavailable", //available, typing, recording
   DELETED_LOG_CHAT: process.env.DELETED_LOG_CHAT || false,
   HEROKU_APP_NAME: process.env.HEROKU_APP_NAME || "",
   HEROKU_API_KEY: process.env.HEROKU_API_KEY || "",
