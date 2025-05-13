@@ -3,7 +3,7 @@ const yts = require("yt-search");
 const fs = require('fs');
 const { exec } = require('child_process');
 const sharp = require("sharp");
-const { izumi, mode, getJson, searchAndSendYouTubeOptions, sendYtResults } = require("../lib");
+const { izumi, mode, getJson, searchAndSendYouTubeOptions, sendYtResults, toAudio, AddMp3Meta, getBuffer } = require("../lib");
 izumi({
   pattern: "video ?(.*)",
   fromMe: mode,
@@ -172,9 +172,10 @@ izumi({
 
     if (!data?.media_url) return await message.reply("Failed to get audio link.");
 
-    const tempFile = `temp_${Date.now()}.mp4`; // Usually .mp4 (audio stream)
-    const finalFile = `final_${Date.now()}.mp3`;
-
+    const tempFile = `temp_${Date.now()}.mp4`;
+    const rawAudio = `raw_${Date.now()}.mp3`;
+    const finalAudio = `final_${Date.now()}.mp3`;
+    
     const response = await axios({ url: data.media_url, responseType: 'stream' });
     const writer = fs.createWriteStream(tempFile);
     response.data.pipe(writer);
@@ -184,9 +185,8 @@ izumi({
       writer.on('error', reject);
     });
 
-    // Extract audio without re-encoding (stream copy)
     await new Promise((resolve, reject) => {
-      exec(`ffmpeg -i ${tempFile} -vn -acodec copy ${finalFile}`, (error) => {
+      exec(`ffmpeg -i ${tempFile} -vn -ar 44100 -ac 2 -b:a 192k ${rawAudio}`, (error) => {
         if (error) reject(error);
         else resolve();
       });
@@ -195,26 +195,32 @@ izumi({
     const imageBuffer = await axios.get(video.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
 
+    const finalBuffer = await AddMp3Meta(fs.readFileSync(rawAudio), jpegThumbnail, {
+      title: video.title,
+      artist: [video.author.name]
+    });
+    fs.writeFileSync(finalAudio, finalBuffer);
+
     await client.sendMessage(message.jid, {
-      audio: fs.readFileSync(finalFile),
-      mimetype: 'audio/mp4',
-      caption: `*${video.title}*`,
+      audio: fs.readFileSync(finalAudio),
+      mimetype: 'audio/mpeg'
     }, { quoted: message.data });
-    
+
     await client.sendMessage(message.jid, {
-      document: fs.readFileSync(finalFile),
+      document: fs.readFileSync(finalAudio),
       fileName: `${video.title}.mp3`,
-      mimetype: 'audio/mp3',
+      mimetype: 'audio/mpeg',
       caption: `*${video.title}*`,
       jpegThumbnail: jpegThumbnail
     }, { quoted: message.data });
 
     fs.unlinkSync(tempFile);
-    fs.unlinkSync(finalFile);
+    fs.unlinkSync(rawAudio);
+    fs.unlinkSync(finalAudio);
 
   } catch (err) {
     console.error("Error:", err);
-    await message.reply("Failed to process audio. Error: " + err.message);
+    await message.reply("Failed to process audio. Error");
   }
 });
 
