@@ -274,10 +274,21 @@ izumi({
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
 
     await client.sendMessage(message.jid, {
-      audio: fs.readFileSync(finalFile),
-      mimetype: 'audio/mp4',
-      caption: `*${data.title}*`,
-    }, { quoted: message.data });
+  audio: fs.readFileSync(finalFile),
+  mimetype: 'audio/mp4',
+  ptt: false, 
+  contextInfo: {
+    externalAdReply: {
+      title: video.title,
+      body: video.author.name,
+      mediaType: 2,
+      thumbnail: jpegThumbnail,
+      mediaUrl: "https://github.com/Akshay-Eypz/izumi-bot",
+      sourceUrl: "https://github.com/Akshay-Eypz/izumi-bot",
+      showAdAttribution: true
+    }
+  }
+}, { quoted: message.data });
     
     await client.sendMessage(message.jid, {
       document: fs.readFileSync(finalFile),
