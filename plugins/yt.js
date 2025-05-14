@@ -279,8 +279,8 @@ izumi({
   ptt: false, 
   contextInfo: {
     externalAdReply: {
-      title: video.title,
-      body: video.author.name,
+      title: data.title,
+      body: "",
       mediaType: 2,
       thumbnail: jpegThumbnail,
       mediaUrl: "https://github.com/Akshay-Eypz/izumi-bot",
