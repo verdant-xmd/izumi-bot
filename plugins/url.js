@@ -1,11 +1,11 @@
-const { izumi, mode, blackVideo } = require("../lib/");
+const { izumi, mode, blackVideo, parsedUrl } = require("../lib/");
 const axios = require("axios");
 const fs = require("fs");
 const FormData = require("form-data");
 const crypto = require("crypto");
 
 izumi({
-  pattern: 'url ?(.*)',
+  pattern: 'fek ?(.*)',
   fromMe: mode,
   desc: 'Upload files to Catbox.moe (fallback to personal CDN)',
   type: 'generator'
@@ -17,6 +17,7 @@ izumi({
   try {
     let mediaBuffer;
     let ext;
+    let filename;
     let formData = new FormData();
 
     if (m.quoted.audio) {
@@ -24,56 +25,84 @@ izumi({
       mediaBuffer = await blackVideo(audioPath);
       fs.unlinkSync(audioPath);
       ext = 'mp4';
-      fs.writeFileSync('temp.mp4', mediaBuffer);
+      filename = 'temp.mp4';
+      fs.writeFileSync(filename, mediaBuffer);
       formData.append('reqtype', 'fileupload');
-      formData.append('fileToUpload', fs.createReadStream('temp.mp4'), {
-        filename: 'temp.mp4',
+      formData.append('fileToUpload', fs.createReadStream(filename), {
+        filename,
         contentType: 'video/mp4'
       });
     } else {
       mediaBuffer = await m.quoted.download('buffer');
-      ext = m.quoted.image ? 'png' : 'mp4';
-      const contentType = m.quoted.image ? 'image/png' : 'video/mp4';
-      const filename = m.quoted.image ? 'upload.png' : 'video.mp4';
-
+      if (m.quoted.image) {
+        ext = 'png';
+        filename = 'upload.png';
+        formData.append('fileToUpload', mediaBuffer, {
+          filename,
+          contentType: 'image/png'
+        });
+      } else {
+        ext = 'mp4';
+        filename = 'video.mp4';
+        formData.append('fileToUpload', mediaBuffer, {
+          filename,
+          contentType: 'video/mp4'
+        });
+      }
       formData.append('reqtype', 'fileupload');
-      formData.append('fileToUpload', mediaBuffer, {
-        filename,
-        contentType
-      });
     }
 
-    // Try Catbox upload first
     try {
       const catboxRes = await axios.post('https://catbox.moe/user/api.php', formData, {
         headers: formData.getHeaders()
       });
 
       const fileUrl = catboxRes.data.trim();
+
+      if (!fileUrl.startsWith('http')) {
+        throw new Error('Catbox error: ' + fileUrl);
+      }
+
       await m.reply(fileUrl);
     } catch (catboxErr) {
-      // Fallback to personal server
       const hash = crypto.createHash('sha256').update(mediaBuffer).digest('hex');
-      const base64 = mediaBuffer.toString('base64');
+      const fallbackFilename = `${hash}.${ext}`;
+      const base64Content = mediaBuffer.toString('base64');
 
-      const fallbackRes = await axios.post('https://cdn.eypz.ct.ws/upload', {
-        base64,
+      const res = await axios.post('https://cdn.eypz.ct.ws/upload', {
+        base64: base64Content,
         ext,
-        filename: `${hash}.${ext}`
+        filename: fallbackFilename
       });
 
-      if (fallbackRes.data?.url) {
-        await m.reply(fallbackRes.data.url);
+      if (res.data?.url) {
+        await m.reply(res.data.url);
       } else {
-        await m.reply("Upload failed: No URL returned from fallback.");
+        await m.reply("Fallback upload failed: No URL returned.");
       }
     }
 
-    // Clean up if needed
     if (fs.existsSync('temp.mp4')) fs.unlinkSync('temp.mp4');
 
-  } catch (error) {
-    console.error('Error:', error);
-    await m.reply(`Upload failed: ${error.message}`);
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || err.message || 'Upload failed.';
+    await m.reply(`Upload failed`);
   }
 });
+
+izumi(
+  {
+    pattern: "upload ?(.*)",
+    fromMe: mode,
+    desc: "send files from multiple URLs",
+    type: "misc",
+  },
+  async (message, match) => {
+    match = match || message.quoted?.text;
+    if (!match) {
+      return await message.send("_reply to a url_");
+    }
+        await message.sendFromUrl(parsedUrl(match));
+      
+  }
+);
