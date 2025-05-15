@@ -2,7 +2,7 @@
 Izumi - Simple whatsapp Multi Device whatsapp bot.   
 ### SETUP
 1. [![Fork](https://img.shields.io/github/forks/Akshay-Eypz/izumi-bot?style=social)](https://github.com/Akshay-Eypz/izumi-bot/fork)
-2.  pair and copy it
+2. get session id
     <br>
 <a href='https://connect.eypz.infy.uk/' target="_blank"><img alt='SESSION' src='https://img.shields.io/badge/SESSION-100000?style=for-the-badge&logo=scan&logoColor=white&labelColor=black&color=black'/></a>
 
