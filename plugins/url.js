@@ -5,7 +5,7 @@ const FormData = require("form-data");
 const crypto = require("crypto");
 
 izumi({
-  pattern: 'fek ?(.*)',
+  pattern: 'url ?(.*)',
   fromMe: mode,
   desc: 'Upload files to Catbox.moe (fallback to personal CDN)',
   type: 'generator'
