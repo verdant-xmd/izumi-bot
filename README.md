@@ -1,4 +1,4 @@
-p#### IZUMI WHATSAPP BOT
+#### IZUMI WHATSAPP BOT
 Izumi - Simple whatsapp Multi Device whatsapp bot.   
 ### SETUP
 1. get session id
