@@ -8,7 +8,7 @@ Izumi - Simple whatsapp Multi Device whatsapp bot.
 ### DEPLOY TO RENDER 
 1. Now Deploy
     <br>
-<a href='https://izumiiii-bot.vercel.app/koyeb' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=render&logoColor=white'/></a>
+<a href='https://izumiiii-bot.vercel.app/render' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=render&logoColor=white'/></a>
 
 
 ### DEPLOY TO KOYEB
