@@ -1,24 +1,14 @@
-#### IZUMI WHATSAPP BOT
+p#### IZUMI WHATSAPP BOT
 Izumi - Simple whatsapp Multi Device whatsapp bot.   
 ### SETUP
-1. [![Fork](https://img.shields.io/github/forks/Akshay-Eypz/izumi-bot?style=social)](https://github.com/Akshay-Eypz/izumi-bot/fork)
-2. get session id
+1. get session id
     <br>
 <a href='https://connect.eypz.infy.uk/' target="_blank"><img alt='SESSION' src='https://img.shields.io/badge/SESSION-100000?style=for-the-badge&logo=scan&logoColor=white&labelColor=black&color=black'/></a>
 
----
 ### DEPLOY TO RENDER 
-
-1. If You don't have a account in render. Create a account.
+1. Now Deploy
     <br>
-<a href='https://dashboard.render.com/register' target="_blank"><img alt='render' src='https://img.shields.io/badge/-Create-black?style=for-the-badge&logo=render&logoColor=white'/></a>
-
-
-2. Get [Render api key](https://dashboard.render.com/u/settings#api-keys)
-
-3. Now Deploy
-    <br>
-<a href='https://render.com/deploy?repo=https://github.com/Akshay-Eypz/izumi-bot' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=render&logoColor=white'/></a>
+<a href='https://izumiiii-bot.vercel.app/koyeb' target="_blank"><img alt='DEPLOY' src='https://img.shields.io/badge/-DEPLOY-black?style=for-the-badge&logo=render&logoColor=white'/></a>
 
 
 ### DEPLOY TO KOYEB
