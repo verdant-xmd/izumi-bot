@@ -12,7 +12,7 @@ const caption = config.CAPTION;
         return await message.reply('Please provide an Instagram URL!');
     }
 
-    const api = `https://eypz.koyeb.app/api/dl/instagram?url=${encodeURIComponent(match)}`;
+    const api = `https://api.eypz.ct.ws/api/dl/instagram?url=${encodeURIComponent(match)}`;
 
     try {
         const response = await fetch(api);
