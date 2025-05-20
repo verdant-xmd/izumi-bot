@@ -8,46 +8,44 @@ const caption = config.CAPTION;
     desc: 'Download all Instagram media (reels/images)',
     type: 'downloader'
 }, async (message, match, client) => {
-    if (!match[1]) {
+    if (!match) {
         return await message.reply('Please provide an Instagram URL!');
     }
 
-    const api = `https://api.eypz.ct.ws/api/dl/instagram?url=${encodeURIComponent(match)}`;
+   const api = `https://fastrestapis.fasturl.cloud/downup/igdown/advanced?url=${match}&type=simple`;
 
-    try {
-        const response = await fetch(api);
-        const data = await response.json();
+(async () => {
+  try {
+    const response = await fetch(api);
+    const data = await response.json();
+    const result = data?.result;
 
-        if (data.status !== 'success') {
-            return await message.reply('Failed to fetch Instagram content. Please check the URL.');
-        }
+    const images = result.images || [];
+    const videos = result.videos || [];
 
-        const { videos, images } = data;
-
-        if (videos.length === 0 && images.length === 0) {
-            return await message.reply('No media found in this post.');
-        }
-
-        for (const vid of videos) {
-            await client.sendMessage(message.jid, {
-                video: { url: vid },
-                caption: caption,
-                mimetype: "video/mp4"
-            }, { quoted: message.data });
-        }
-
-        for (const img of images) {
-            await client.sendMessage(message.jid, {
-                image: { url: img },
-                caption: caption 
-            }, { quoted: message.data });
-        }
-    } catch (error) {
-        await message.reply('An error occurred while processing your request.');
-        console.error(error);
+    
+    for (const url of images) {
+      await message.client.sendMessage(message.chat, {
+        image: { url },
+        caption: caption
+      }, { quoted: message.data });
     }
-});
 
+    
+    for (const url of videos) {
+      await message.client.sendMessage(message.chat, {
+        video: { url },
+        caption: caption
+      }, { quoted: message.data });
+    }
+  } catch (err) {
+    console.error("Error fetching media:", err);
+    await message.client.sendMessage(message.chat, {
+      text: "Error fetching media"
+    }, { quoted: message.data });
+  }
+})();
+});
 izumi({
     pattern: 'fb ?(.*)',
     fromMe: mode,
