@@ -19,7 +19,7 @@ izumi({
 
     await message.reply(`_*Downloading: ${video.title}...*_`);
 
-    const apiUrl = `https://eypz.koyeb.app/api/dl/ytv?url=${encodeURIComponent(video.url)}&quality=720&apikey=akshay-eypz`;
+    const apiUrl = `https://api.eypz.ct.ws/api/dl/ytv?url=${encodeURIComponent(video.url)}&quality=720&apikey=akshay-eypz`;
     const { data } = await axios.get(apiUrl, { 
       headers: { 
         'Cache-Control': 'no-cache',
@@ -87,7 +87,7 @@ izumi({
   if (!match) return await message.reply("Please provide a url.");
 
   try {
-    const apiUrl = `https://eypz.koyeb.app/api/dl/ytv?url=${encodeURIComponent(match)}&quality=720&apikey=akshay-eypz`;
+    const apiUrl = `https://api.eypz.ct.ws/api/dl/ytv?url=${encodeURIComponent(match)}&quality=720&apikey=akshay-eypz`;
     const { data } = await axios.get(apiUrl, { 
       headers: { 
         'Cache-Control': 'no-cache',
@@ -162,7 +162,7 @@ izumi({
 
     await message.reply(`_*Downloading: ${video.title}...*_`);
 
-    const apiUrl = `https://eypz.koyeb.app/api/dl/yta?url=${encodeURIComponent(video.url)}&quality=128&apikey=akshay-eypz`;
+    const apiUrl = `https://api.eypz.ct.ws/api/dl/yta?url=${encodeURIComponent(video.url)}&quality=128&apikey=akshay-eypz`;
     const { data } = await axios.get(apiUrl, {
       headers: {
         'Cache-Control': 'no-cache',
@@ -239,7 +239,7 @@ izumi({
 
   try {
     
-    const apiUrl = `https://eypz.koyeb.app/api/dl/yta?url=${encodeURIComponent(match)}&quality=128&apikey=akshay-eypz`;
+    const apiUrl = `https://api.eypz.ct.ws/api/dl/yta?url=${encodeURIComponent(match)}&quality=128&apikey=akshay-eypz`;
     const { data } = await axios.get(apiUrl, {
       headers: {
         'Cache-Control': 'no-cache',
