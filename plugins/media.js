@@ -3,6 +3,8 @@ const { izumi, mode, toAudio,blackVideo,getFfmpegBuffer,audioCut,videoTrim } = r
 const fs = require('fs');
 const FormData = require("form-data");
 const crypto = require("crypto");
+const mime = require("mime-types");
+const FileType = require("file-type");
 
 izumi(
   {
@@ -41,6 +43,33 @@ izumi({
     
     return await message.sendMessage("An error occurred while processing your request.");
   }
+});
+izumi({
+  pattern: "toDoc",
+  fromMe: mode,
+  desc: "convert video to ptv",
+  type: "converter",
+}, async (message, client) => {
+if (!message.reply_message) {
+      return await message.reply('*Reply to any media!*');
+}
+const mediaBuffer = await message.quoted.download("buffer");
+let mimeType = message.quoted.msg?.[message.quoted.mtype]?.mimetype;
+
+if (!mimeType) {
+  const type = await FileType.fileTypeFromBuffer(mediaBuffer);
+  mimeType = type?.mime || 'application/octet-stream';
+}
+let extension = mime.extension(mimeType) || 'bin';
+const random = crypto.randomBytes(3).toString("hex");
+const filename = `izumi-${random}.${extension}`;
+fs.writeFileSync(filename, mediaBuffer);
+await message.client.sendMessage(message.jid, {
+  document: fs.readFileSync(filename),
+  fileName: filename,
+  mimetype: mimeType
+}, { quoted: message.data });
+fs.unlinkSync(filename);
 });
 izumi({
   pattern: "toPtv",
