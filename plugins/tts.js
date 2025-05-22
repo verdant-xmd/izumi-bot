@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 izumi({
-    pattern: 'tts-nova ?(.*)',
+    pattern: 'ttsnova ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -23,7 +23,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-alloy ?(.*)',
+    pattern: 'ttsalloy ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -42,7 +42,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-ash ?(.*)',
+    pattern: 'ttsash ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -61,7 +61,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-coral ?(.*)',
+    pattern: 'ttscoral ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -80,7 +80,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-echo ?(.*)',
+    pattern: 'ttsecho ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -99,7 +99,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-fable ?(.*)',
+    pattern: 'ttsfable ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -118,7 +118,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-onyx ?(.*)',
+    pattern: 'ttsonyx ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -137,7 +137,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-sage ?(.*)',
+    pattern: 'ttssage ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
@@ -156,7 +156,7 @@ izumi({
 });
 
 izumi({
-    pattern: 'tts-shimmer ?(.*)',
+    pattern: 'ttsshimmer ?(.*)',
     fromMe: mode,
     desc: 'text to speech',
     type: 'tts',
