@@ -1,6 +1,9 @@
 const config = require("../config");
 const { izumi, mode, toAudio,blackVideo,getFfmpegBuffer,audioCut,videoTrim } = require("../lib/");
 const fs = require('fs');
+const FormData = require("form-data");
+const crypto = require("crypto");
+
 izumi(
   {
     pattern: "photo",
@@ -20,7 +23,7 @@ izumi({
   pattern: "voice",
   fromMe: mode,
   desc: "converts video/mp3 to voice note",
-  type: "media",
+  type: "converter",
 }, async (message, match) => {
   try {
 
@@ -39,11 +42,41 @@ izumi({
     return await message.sendMessage("An error occurred while processing your request.");
   }
 });
+izumi({
+  pattern: "toPtv",
+  fromMe: mode,
+  desc: "convert video to ptv",
+  type: "converter",
+}, async (message, client) => {
+
+if (!message.reply_message || !message.reply_message.video) {
+      return await message.reply('*Reply to an video!*');
+}
+const mediaBuffer = await message.quoted.download("buffer");
+const ext = 'mp4';
+const filename = 'temp.mp4';
+
+fs.writeFileSync(filename, mediaBuffer);
+
+const formData = new FormData();
+formData.append('reqtype', 'fileupload');
+formData.append('fileToUpload', fs.createReadStream(filename), {
+  filename,
+  contentType: 'video/mp4'
+});
+await message.client.sendMessage(message.jid, {
+  video: fs.readFileSync(filename),
+  mimetype: 'video/mp4',
+  ptv: true,
+  gifPlayback: true
+}, { quoted: message.data });
+fs.unlinkSync(filename);
+});
  izumi({
   pattern: "mp3",
   fromMe: mode,
   desc: "converts video/voice to mp3",
-  type: "media",
+  type: "converter",
 }, async (message, match) => {
   try {
     let buff = await message.quoted.download("buffer");
@@ -62,7 +95,7 @@ izumi({
   }
 });
 izumi(
-  { pattern: 'black', fromMe: mode, desc: 'Audio to black screen video.', type: 'media' },
+  { pattern: 'black', fromMe: mode, desc: 'Audio to black screen video.', type: 'converter' },
   async (message, match) => {
     
     if (!message.reply_message || !message.reply_message.audio) {
