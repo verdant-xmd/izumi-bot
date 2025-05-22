@@ -5,7 +5,44 @@ const FormData = require("form-data");
 const crypto = require("crypto");
 const mime = require("mime-types");
 const FileType = require("file-type");
+izumi(
+  {
+    pattern: "mediaInfo",
+    fromMe: mode,
+    desc: "Get media info",
+    type: "info",
+  },
+  async (message, match, client) => {
+if (!message.quoted) return await message.reply("Reply to a media message.");
+const buffer = await message.quoted.download("buffer");
+const type = await FileType.fromBuffer(buffer);
 
+const mimetype = type?.mime || "unknown";
+const ext = type?.ext || "unknown";
+const size = (buffer.length / 1024).toFixed(2);
+
+let extra = "";
+if (message.quoted.mtype === "imageMessage") {
+  const img = message.quoted.msg.imageMessage;
+  extra = `Resolution: ${img.width}x${img.height}`;
+} else if (m.quoted.mtype === "videoMessage") {
+  const vid = message.quoted.msg.videoMessage;
+  extra = `Resolution: ${vid.width}x${vid.height}\nDuration: ${vid.seconds || vid.duration || 'unknown'} sec`;
+} else if (message.quoted.mtype === "audioMessage") {
+  const aud = message.quoted.msg.audioMessage;
+  extra = `Duration: ${aud.seconds || aud.duration || 'unknown'} sec`;
+}
+
+const caption = `*Media Info:*\n` +
+                `- Type: ${m.quoted.mtype}\n` +
+                `- MIME: ${mimetype}\n` +
+                `- Extension: .${ext}\n` +
+                `- Size: ${size} KB\n` +
+                `${extra}`.trim();
+
+await message.reply(caption);
+  });
+    
 izumi(
   {
     pattern: "photo",
