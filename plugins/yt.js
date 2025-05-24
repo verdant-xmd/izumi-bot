@@ -32,7 +32,7 @@ async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
 
     const imageBuffer = await axios.get(thumbnailUrl, { responseType: "arraybuffer" }).then((res) => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
-    const title = data.title;*
+    const title = data.title;
     await client.sendMessage(
       message.jid,
       {
