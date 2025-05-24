@@ -153,7 +153,7 @@ izumi({
 
   await message.reply(`_*Downloading: ${video.title}...*_`);
 
-  const videoIdMatch = match.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
+  const videoIdMatch = video.url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
   const videoId = videoIdMatch ? videoIdMatch[1] : null;
   if (!videoId) return await message.reply("Could not extract video ID.");
 
@@ -189,7 +189,7 @@ izumi({
 
   await message.reply(`_*Downloading: ${video.title}...*_`);
 
-  const videoIdMatch = match.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
+  const videoIdMatch = video.url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
   const videoId = videoIdMatch ? videoIdMatch[1] : null;
   if (!videoId) return await message.reply("Could not extract video ID.");
 
