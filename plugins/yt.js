@@ -32,7 +32,7 @@ async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
 
     const imageBuffer = await axios.get(thumbnailUrl, { responseType: "arraybuffer" }).then((res) => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
-
+    const title = data.title;*
     await client.sendMessage(
       message.jid,
       {
@@ -88,15 +88,16 @@ async function downloadAndSendAudio(message, client, videoUrl, title, videoId) {
     });
 
     await new Promise((resolve, reject) => {
-      exec(`ffmpeg -i ${tempFile} -vn -acodec copy ${finalFile}`, (error) => {
-        if (error) reject(error);
-        else resolve();
-      });
-    });
+  exec(`ffmpeg -i "${tempFile}" -vn -ar 44100 -ac 2 -b:a 192k "${finalFile}"`, (error) => {
+    if (error) reject(error);
+    else resolve();
+  });
+});
 
     const imageBuffer = await axios.get(thumbnailUrl, { responseType: "arraybuffer" }).then((res) => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
-
+    const title = data.title;
+    
     await client.sendMessage(
       message.jid,
       {
