@@ -1,150 +1,177 @@
 const axios = require("axios");
 const yts = require("yt-search");
-const fs = require('fs');
-const { exec } = require('child_process');
+const fs = require("fs");
+const path = require("path");
 const sharp = require("sharp");
-const { izumi, mode, getJson, searchAndSendYouTubeOptions, sendYtResults } = require("../lib");
-izumi({
-  pattern: "video ?(.*)",
-  fromMe: mode,
-  desc: "Download YouTube videos ",
-  type: "downloader",
-}, async (message, match, client) => {
-  if (!match) return await message.reply("Please provide a search query.");
+const { exec } = require("child_process");
+const { izumi, mode, searchAndSendYouTubeOptions, sendYtResults } = require("../lib");
 
+async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
   try {
-    const { videos } = await yts(match);
-    if (!videos.length) return await message.reply("No videos found!");
-    const video = videos[0];
-
-    await message.reply(`_*Downloading: ${video.title}...*_`);
-
-    const apiUrl = `https://api.eypz.ct.ws/api/dl/ytv?url=${encodeURIComponent(video.url)}&quality=720&apikey=akshay-eypz`;
-    const { data } = await axios.get(apiUrl, { 
-      headers: { 
-        'Cache-Control': 'no-cache',
-        'User-Agent': 'WhatsAppBot/1.0'
-      }
+    const apiUrl = `https://api.eypz.ct.ws/api/dl/yt?url=${encodeURIComponent(videoUrl)}&format=mp4`;
+    const { data } = await axios.get(apiUrl, {
+      headers: {
+        "Cache-Control": "no-cache",
+        "User-Agent": "WhatsAppBot/1.0",
+      },
     });
 
-    if (!data?.media_url) return await message.reply("Failed to get download link.");
+    if (!data?.downloadURL) return await message.reply("Failed to get download link.");
 
-    const tempFile = `temp_${Date.now()}.mp4`;
-    const finalFile = `final_${Date.now()}.mp4`;
+    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    const tempFile = path.join(__dirname, `temp_${Date.now()}.mp4`);
 
-    const response = await axios({ url: data.media_url, responseType: 'stream' });
+    const response = await axios.get(data.downloadURL, { responseType: "stream" });
     const writer = fs.createWriteStream(tempFile);
     response.data.pipe(writer);
 
     await new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
+      writer.on("finish", resolve);
+      writer.on("error", reject);
     });
 
-    // Fast metadata fix without re-encoding
-    await new Promise((resolve, reject) => {
-      exec(`ffmpeg -i ${tempFile} -c copy -movflags faststart ${finalFile}`, 
-        (error) => {
-          if (error) reject(error);
-          else resolve();
-        }
-      );
-    });
-
-    const imageBuffer = await axios.get(video.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
+    const imageBuffer = await axios.get(thumbnailUrl, { responseType: "arraybuffer" }).then((res) => res.data);
     const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
 
-    await client.sendMessage(message.jid, {
-      video: fs.readFileSync(finalFile),
-      mimetype: 'video/mp4',
-      caption: `*${video.title}*`,
-    }, { quoted: message.data });
-    
-    await client.sendMessage(message.jid, {
-      document: fs.readFileSync(finalFile),
-      fileName: `${video.title}.mp4`,
-      mimetype: 'video/mp4',
-      caption: `*${video.title}*`,
-      jpegThumbnail: jpegThumbnail
-    }, { quoted: message.data });
+    await client.sendMessage(
+      message.jid,
+      {
+        video: fs.readFileSync(tempFile),
+        mimetype: "video/mp4",
+        caption: `*${title}*`,
+      },
+      { quoted: message.data }
+    );
 
-    // Clean up
+    await client.sendMessage(
+      message.jid,
+      {
+        document: fs.readFileSync(tempFile),
+        fileName: `${title}.mp4`,
+        mimetype: "video/mp4",
+        caption: `*${title}*`,
+        jpegThumbnail,
+      },
+      { quoted: message.data }
+    );
+
     fs.unlinkSync(tempFile);
-    fs.unlinkSync(finalFile);
-
   } catch (err) {
     console.error("Error:", err);
     await message.reply("Failed to process video. Error: " + err.message);
   }
+}
+
+async function downloadAndSendAudio(message, client, videoUrl, title, videoId) {
+  try {
+    const apiUrl = `https://api.eypz.ct.ws/api/dl/yt?url=${encodeURIComponent(videoUrl)}&format=mp4`;
+    const { data } = await axios.get(apiUrl, {
+      headers: {
+        "Cache-Control": "no-cache",
+        "User-Agent": "WhatsAppBot/1.0",
+      },
+    });
+
+    if (!data?.downloadURL) return await message.reply("Failed to get audio link.");
+
+    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    const tempFile = path.join(__dirname, `temp_${Date.now()}.mp4`);
+    const finalFile = path.join(__dirname, `final_${Date.now()}.mp3`);
+    
+    const response = await axios.get(data.downloadURL, { responseType: "stream" });
+    const writer = fs.createWriteStream(tempFile);
+    response.data.pipe(writer);
+
+    await new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+
+    await new Promise((resolve, reject) => {
+      exec(`ffmpeg -i ${tempFile} -vn -acodec copy ${finalFile}`, (error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
+
+    const imageBuffer = await axios.get(thumbnailUrl, { responseType: "arraybuffer" }).then((res) => res.data);
+    const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
+
+    await client.sendMessage(
+      message.jid,
+      {
+        audio: fs.readFileSync(finalFile),
+        mimetype: "audio/mp4",
+        ptt: false,
+        contextInfo: {
+          externalAdReply: {
+            title: title,
+            body: "",
+            mediaType: 2,
+            thumbnail: jpegThumbnail,
+            mediaUrl: "https://github.com/Akshay-Eypz/izumi-bot",
+            sourceUrl: "https://github.com/Akshay-Eypz/izumi-bot",
+            showAdAttribution: true,
+          },
+        },
+      },
+      { quoted: message.data }
+    );
+
+    await client.sendMessage(
+      message.jid,
+      {
+        document: fs.readFileSync(finalFile),
+        fileName: `${title}.mp3`,
+        mimetype: "audio/mp3",
+        caption: `*${title}*`,
+        jpegThumbnail,
+      },
+      { quoted: message.data }
+    );
+
+    fs.unlinkSync(tempFile);
+    fs.unlinkSync(finalFile);
+  } catch (err) {
+    console.error("Error:", err);
+    await message.reply("Failed to process audio. Error: " + err.message);
+  }
+}
+
+izumi({
+  pattern: "video ?(.*)",
+  fromMe: mode,
+  desc: "Download YouTube videos",
+  type: "downloader",
+}, async (message, match, client) => {
+  if (!match) return await message.reply("Please provide a search query.");
+
+  const { videos } = await yts(match);
+  if (!videos.length) return await message.reply("No videos found!");
+  const video = videos[0];
+
+  await message.reply(`_*Downloading: ${video.title}...*_`);
+
+  const videoIdMatch = match.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
+  const videoId = videoIdMatch ? videoIdMatch[1] : null;
+  if (!videoId) return await message.reply("Could not extract video ID.");
+
+  await downloadAndSendVideo(message, client, video.url, video.title, videoId);
 });
 
 izumi({
   pattern: "ytv ?(.*)",
   fromMe: mode,
-  desc: "Download YouTube videos ",
+  desc: "Download YouTube video by URL",
   type: "downloader",
 }, async (message, match, client) => {
-  if (!match) return await message.reply("Please provide a url.");
+  if (!match) return await message.reply("Please provide a video URL.");
 
-  try {
-    const apiUrl = `https://api.eypz.ct.ws/api/dl/ytv?url=${encodeURIComponent(match)}&quality=720&apikey=akshay-eypz`;
-    const { data } = await axios.get(apiUrl, { 
-      headers: { 
-        'Cache-Control': 'no-cache',
-        'User-Agent': 'WhatsAppBot/1.0'
-      }
-    });
-    if (!data?.media_url) return await message.reply("Failed to get download link.");
+  const videoIdMatch = match.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
+  const videoId = videoIdMatch ? videoIdMatch[1] : null;
+  if (!videoId) return await message.reply("Invalid YouTube URL.");
 
-    await message.reply(`_*Downloading: ${data.title}...*_`);
-    
-    const tempFile = `temp_${Date.now()}.mp4`;
-    const finalFile = `final_${Date.now()}.mp4`;
-
-    const response = await axios({ url: data.media_url, responseType: 'stream' });
-    const writer = fs.createWriteStream(tempFile);
-    response.data.pipe(writer);
-
-    await new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
-
-    // Fast metadata fix without re-encoding
-    await new Promise((resolve, reject) => {
-      exec(`ffmpeg -i ${tempFile} -c copy -movflags faststart ${finalFile}`, 
-        (error) => {
-          if (error) reject(error);
-          else resolve();
-        }
-      );
-    });
-
-    const imageBuffer = await axios.get(data.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
-    const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
-
-    await client.sendMessage(message.jid, {
-      video: fs.readFileSync(finalFile),
-      mimetype: 'video/mp4',
-      caption: `*${data.title}*`,
-    }, { quoted: message.data });
-    
-    await client.sendMessage(message.jid, {
-      document: fs.readFileSync(finalFile),
-      fileName: `${data.title}.mp4`,
-      mimetype: 'video/mp4',
-      caption: `*${data.title}*`,
-      jpegThumbnail: jpegThumbnail
-    }, { quoted: message.data });
-
-    // Clean up
-    fs.unlinkSync(tempFile);
-    fs.unlinkSync(finalFile);
-
-  } catch (err) {
-    console.error("Error:", err);
-    await message.reply("Failed to process video. Error: " + err.message);
-  }
+  await downloadAndSendVideo(message, client, match, "YouTube Video", videoId);
 });
 
 izumi({
@@ -153,167 +180,45 @@ izumi({
   desc: "Download YouTube audio",
   type: "downloader",
 }, async (message, match, client) => {
-  if (!match) return await message.reply("Please provide a search query or url.");
+  if (!match) return await message.reply("Please provide a search query.");
 
-  try {
-    const { videos } = await yts(match);
-    if (!videos.length) return await message.reply("No videos found!");
-    const video = videos[0];
+  const { videos } = await yts(match);
+  if (!videos.length) return await message.reply("No videos found!");
+  const video = videos[0];
 
-    await message.reply(`_*Downloading: ${video.title}...*_`);
+  await message.reply(`_*Downloading: ${video.title}...*_`);
 
-    const apiUrl = `https://api.eypz.ct.ws/api/dl/yta?url=${encodeURIComponent(video.url)}&quality=128&apikey=akshay-eypz`;
-    const { data } = await axios.get(apiUrl, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        'User-Agent': 'WhatsAppBot/1.0'
-      }
-    });
+  const videoIdMatch = match.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
+  const videoId = videoIdMatch ? videoIdMatch[1] : null;
+  if (!videoId) return await message.reply("Could not extract video ID.");
 
-    if (!data?.media_url) return await message.reply("Failed to get audio link.");
-
-    const tempFile = `temp_${Date.now()}.mp4`; // Usually .mp4 (audio stream)
-    const finalFile = `final_${Date.now()}.mp3`;
-
-    const response = await axios({ url: data.media_url, responseType: 'stream' });
-    const writer = fs.createWriteStream(tempFile);
-    response.data.pipe(writer);
-
-    await new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
-
-    // Extract audio without re-encoding (stream copy)
-    await new Promise((resolve, reject) => {
-      exec(`ffmpeg -i ${tempFile} -vn -acodec copy ${finalFile}`, (error) => {
-        if (error) reject(error);
-        else resolve();
-      });
-    });
-
-    const imageBuffer = await axios.get(video.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
-    const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
-
-    await client.sendMessage(message.jid, {
-  audio: fs.readFileSync(finalFile),
-  mimetype: 'audio/mp4',
-  ptt: false, 
-  contextInfo: {
-    externalAdReply: {
-      title: video.title,
-      body: video.author.name,
-      mediaType: 2,
-      thumbnail: jpegThumbnail,
-      mediaUrl: "https://github.com/Akshay-Eypz/izumi-bot",
-      sourceUrl: "https://github.com/Akshay-Eypz/izumi-bot",
-      showAdAttribution: true
-    }
-  }
-}, { quoted: message.data });
-    
-    await client.sendMessage(message.jid, {
-      document: fs.readFileSync(finalFile),
-      fileName: `${video.title}.mp3`,
-      mimetype: 'audio/mp3',
-      caption: `*${video.title}*`,
-      jpegThumbnail: jpegThumbnail
-    }, { quoted: message.data });
-
-    fs.unlinkSync(tempFile);
-    fs.unlinkSync(finalFile);
-
-  } catch (err) {
-    console.error("Error:", err);
-    await message.reply("Failed to process audio. Error: " + err.message);
-  }
+  await downloadAndSendAudio(message, client, video.url, video.title, videoId);
 });
 
 izumi({
   pattern: "yta ?(.*)",
   fromMe: mode,
-  desc: "Download YouTube audio",
+  desc: "Download YouTube audio by URL",
   type: "downloader",
 }, async (message, match, client) => {
-  if (!match) return await message.reply("Please provide a search query or url.");
+  if (!match) return await message.reply("Please provide a URL.");
 
-  try {
-    
-    const apiUrl = `https://api.eypz.ct.ws/api/dl/yta?url=${encodeURIComponent(match)}&quality=128&apikey=akshay-eypz`;
-    const { data } = await axios.get(apiUrl, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        'User-Agent': 'WhatsAppBot/1.0'
-      }
-    });
+  const videoIdMatch = match.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/shorts\/|v=)([a-zA-Z0-9_-]{11})/);
+  const videoId = videoIdMatch ? videoIdMatch[1] : null;
+  if (!videoId) return await message.reply("Invalid YouTube URL.");
 
-    if (!data?.media_url) return await message.reply("Failed to get audio link.");
-
-    await message.reply(`_*Downloading: ${data.title}...*_`);
-    const tempFile = `temp_${Date.now()}.mp4`; // Usually .mp4 (audio stream)
-    const finalFile = `final_${Date.now()}.mp3`;
-
-    const response = await axios({ url: data.media_url, responseType: 'stream' });
-    const writer = fs.createWriteStream(tempFile);
-    response.data.pipe(writer);
-
-    await new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
-
-    // Extract audio without re-encoding (stream copy)
-    await new Promise((resolve, reject) => {
-      exec(`ffmpeg -i ${tempFile} -vn -acodec copy ${finalFile}`, (error) => {
-        if (error) reject(error);
-        else resolve();
-      });
-    });
-
-    const imageBuffer = await axios.get(data.thumbnail, { responseType: "arraybuffer" }).then(res => res.data);
-    const jpegThumbnail = await sharp(imageBuffer).resize(300, 300).jpeg().toBuffer();
-
-    await client.sendMessage(message.jid, {
-  audio: fs.readFileSync(finalFile),
-  mimetype: 'audio/mp4',
-  ptt: false, 
-  contextInfo: {
-    externalAdReply: {
-      title: data.title,
-      body: "",
-      mediaType: 2,
-      thumbnail: jpegThumbnail,
-      mediaUrl: "https://github.com/Akshay-Eypz/izumi-bot",
-      sourceUrl: "https://github.com/Akshay-Eypz/izumi-bot",
-      showAdAttribution: true
-    }
-  }
-}, { quoted: message.data });
-    
-    await client.sendMessage(message.jid, {
-      document: fs.readFileSync(finalFile),
-      fileName: `${data.title}.mp3`,
-      mimetype: 'audio/mp3',
-      caption: `*${data.title}*`,
-      jpegThumbnail: jpegThumbnail
-    }, { quoted: message.data });
-
-    fs.unlinkSync(tempFile);
-    fs.unlinkSync(finalFile);
-
-  } catch (err) {
-    console.error("Error:", err);
-    await message.reply("Failed to process audio. Error: " + err.message);
-  }
+  await downloadAndSendAudio(message, client, match, "YouTube Audio", videoId);
 });
+
 izumi({
-    pattern: "play ?(.*)",
-    fromMe: mode,
-    desc: "Search YouTube and provide quick options.",
-    type: "downloader",
+  pattern: "play ?(.*)",
+  fromMe: mode,
+  desc: "Search YouTube and provide quick options.",
+  type: "downloader",
 }, async (message, match) => {
-    await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match);
+  await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match);
 });
+
 izumi({
     pattern: 'yts ?(.*)',
     fromMe: true,
