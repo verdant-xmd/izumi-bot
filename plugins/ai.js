@@ -2,7 +2,7 @@ const { izumi, getJson, mode } = require("../lib");
 izumi({
     pattern: 'gpt3 ?(.*)',
     fromMe: mode,
-    desc: 'chat got',
+    desc: 'chat gpt',
     type: 'ai',
 }, async (message, match, client) => {
     const text = match || (message.reply_message && message.reply_message.text);
@@ -52,7 +52,7 @@ await client.sendMessage(
 izumi({
     pattern: 'gpt4 ?(.*)',
     fromMe: mode,
-    desc: 'chat got',
+    desc: 'chat gpt',
     type: 'ai',
 }, async (message, match, client) => {
     const text = match || (message.reply_message && message.reply_message.text);
