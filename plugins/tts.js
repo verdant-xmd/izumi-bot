@@ -1,175 +1,172 @@
-const { izumi, getJson, mode } = require("../lib");
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+const { izumi, mode, generateTTS } = require('../lib');
 
 izumi({
     pattern: 'ttsnova ?(.*)',
     fromMe: mode,
-    desc: 'text to speech',
+    desc: 'text to speech - nova',
     type: 'tts',
-}, async (message, match, client) => {
+}, async (message, match) => {
     const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-nova Hello I'm nova*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=nova&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
-});
-
-izumi({
-    pattern: 'ttsalloy ?(.*)',
-    fromMe: mode,
-    desc: 'text to speech',
-    type: 'tts',
-}, async (message, match, client) => {
-    const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-alloy Hello I'm alloy*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=alloy&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
-});
-
-izumi({
-    pattern: 'ttsash ?(.*)',
-    fromMe: mode,
-    desc: 'text to speech',
-    type: 'tts',
-}, async (message, match, client) => {
-    const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-ash Hello I'm ash*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=ash&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
-});
-
-izumi({
-    pattern: 'ttscoral ?(.*)',
-    fromMe: mode,
-    desc: 'text to speech',
-    type: 'tts',
-}, async (message, match, client) => {
-    const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-coral Hello I'm coral*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=coral&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsnova Hello I'm nova*_");
+    const result = await generateTTS(text, 'nova', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
 });
 
 izumi({
     pattern: 'ttsecho ?(.*)',
     fromMe: mode,
-    desc: 'text to speech',
+    desc: 'text to speech - echo',
     type: 'tts',
-}, async (message, match, client) => {
+}, async (message, match) => {
     const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-echo Hello I'm echo*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=echo&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsecho Hello I'm echo*_");
+    const result = await generateTTS(text, 'echo', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
+});
+
+izumi({
+    pattern: 'ttsalloy ?(.*)',
+    fromMe: mode,
+    desc: 'text to speech - alloy',
+    type: 'tts',
+}, async (message, match) => {
+    const text = match || (message.reply_message && message.reply_message.text);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsalloy Hello I'm alloy*_");
+    const result = await generateTTS(text, 'alloy', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
+});
+
+izumi({
+    pattern: 'ttsash ?(.*)',
+    fromMe: mode,
+    desc: 'text to speech - ash',
+    type: 'tts',
+}, async (message, match) => {
+    const text = match || (message.reply_message && message.reply_message.text);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsash Hello I'm ash*_");
+    const result = await generateTTS(text, 'ash', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
+});
+
+izumi({
+    pattern: 'ttscoral ?(.*)',
+    fromMe: mode,
+    desc: 'text to speech - coral',
+    type: 'tts',
+}, async (message, match) => {
+    const text = match || (message.reply_message && message.reply_message.text);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttscoral Hello I'm coral*_");
+    const result = await generateTTS(text, 'coral', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
 });
 
 izumi({
     pattern: 'ttsfable ?(.*)',
     fromMe: mode,
-    desc: 'text to speech',
+    desc: 'text to speech - fable',
     type: 'tts',
-}, async (message, match, client) => {
+}, async (message, match) => {
     const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-fable Hello I'm fable*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=fable&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsfable Hello I'm fable*_");
+    const result = await generateTTS(text, 'fable', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
 });
 
 izumi({
     pattern: 'ttsonyx ?(.*)',
     fromMe: mode,
-    desc: 'text to speech',
+    desc: 'text to speech - onyx',
     type: 'tts',
-}, async (message, match, client) => {
+}, async (message, match) => {
     const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-onyx Hello I'm onyx*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=onyx&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsonyx Hello I'm onyx*_");
+    const result = await generateTTS(text, 'onyx', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
 });
 
 izumi({
     pattern: 'ttssage ?(.*)',
     fromMe: mode,
-    desc: 'text to speech',
+    desc: 'text to speech - sage',
     type: 'tts',
-}, async (message, match, client) => {
+}, async (message, match) => {
     const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-onyx Hello I'm sage*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=sage&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttssage Hello I'm sage*_");
+    const result = await generateTTS(text, 'sage', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
 });
 
 izumi({
     pattern: 'ttsshimmer ?(.*)',
     fromMe: mode,
-    desc: 'text to speech',
+    desc: 'text to speech - shimmer',
     type: 'tts',
-}, async (message, match, client) => {
+}, async (message, match) => {
     const text = match || (message.reply_message && message.reply_message.text);
-    if (!text) return await message.reply("_*Need a query*_\nexample: _*.tts-onyx Hello I'm shimmer*_");
-    const ttsJson = await getJson(`https://api.eypz.ct.ws/api/ai/tts?text=${encodeURIComponent(text)}&character=shimmer&speed=1.00`);
-    if (!ttsJson || !ttsJson.url) return await message.reply("TTS URL not found.");
-    const tempPath = path.join(__dirname, 'temp-tts.mp4');
-    const writer = fs.createWriteStream(tempPath);
-    const response = await axios.get(ttsJson.url, { responseType: 'stream' });
-    response.data.pipe(writer);
-    await new Promise((res, rej) => { writer.on('finish', res); writer.on('error', rej); });
-    await client.sendMessage(message.jid, { audio: fs.readFileSync(tempPath), mimetype: 'audio/mp4', ptt: true }, { quoted: message.data });
-    fs.unlinkSync(tempPath);
+    if (!text) return await message.reply("_*Need a query*_\nexample: _*.ttsshimmer Hello I'm shimmer*_");
+    const result = await generateTTS(text, 'shimmer', "1.00");
+    if (result.url) {
+        await message.sendFromUrl(result.url, { mimetype: 'audio/mp4', ptt: true });
+    } else {
+        await message.client.sendMessage(client.user.id, {
+       text: "Limit extended\nIt will refresh in next day",
+         ai: true
+}, { quoted: message.data });
+    }
 });
