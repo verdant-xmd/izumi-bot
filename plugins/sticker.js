@@ -1,6 +1,31 @@
 const config = require("../config");
 const { izumi, mode, toAudio, webp2mp4, addExif, AddMp3Meta, getBuffer } = require("../lib/");
 const fs = require("fs");
+const { Image } = require("node-webpmux");
+
+izumi(
+  {
+    pattern: "exif$",
+    fromMe: true,
+    desc: "get sticker data",
+    type: "converter",
+  },
+  async (message, match, client) => {
+if (!message.reply_message || !message.reply_message.sticker)
+      return await message.reply("*_Reply to sticker_*");
+let img = new Image();
+await img.load(await message.quoted.download());
+const exif = JSON.parse(img.exif.slice(22).toString());
+const get = (val) => val && val !== "" ? val : "_not available_";
+
+const text = `*PACK-ID*           : ${get(exif["sticker-pack-id"])}
+*PACK-NAME*         : ${get(exif["sticker-pack-name"])}
+*PACK-PUBLISHER*    : ${get(exif["sticker-pack-publisher"])}
+*EMOJIS*            : ${get(exif["emojis"])}
+*ANDROID APP LINK*  : ${get(exif["android-app-store-link"])}
+*IOS APP LINK*      : ${get(exif["ios-app-store-link"])}`;
+await message.reply(text);
+});
 
 izumi(
   {
