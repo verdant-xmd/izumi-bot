@@ -39,7 +39,7 @@ try {
     pfp = "https://cdn.eypz.ct.ws/url/15-05-25_06-18_w9fi.png";
 }
 
-await client.sendMessage(m.jid, {
+await client.sendMessage(message.jid, {
     image: { url: pfp },
     mimetype: "image/png",
     caption: caption,
