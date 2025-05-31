@@ -436,3 +436,48 @@ async (message, match) => {
         return await message.reply("*_Failed to kick the user_*");
     }
 });
+
+izumi({
+    pattern: 'whois ?(.*)',
+    fromMe: true,
+    desc: 'fetch user info',
+    type: 'user',
+}, async (message, match, client) => {
+let number = match || (message.reply_message && message.reply_message.jid);
+if (!number) return await message.reply("Please provide or reply to a number.");
+
+if (!number.includes('@s.whatsapp.net')) {
+    number = number.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+}
+try {
+    about = (await client.fetchStatus(number))?.status || "No about/status found.";
+} catch {
+    about = "Privacy settings hide about.";
+}
+
+let pfp;
+try {
+    pfp = await client.profilePictureUrl(number, 'image');
+} catch {
+    pfp = "https://cdn.eypz.ct.ws/url/31-05-25_00-40_9e70.png";
+}
+
+let lastSeen = "Unavailable or hidden";
+try {
+    const presence = await client.presenceSubscribe(number);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    const last = client.chatUpdate?.[number]?.lastSeen;
+    if (last) {
+        lastSeen = new Date(last * 1000).toLocaleString();
+    }
+} catch {
+    lastSeen = "Private or not available";
+}
+
+let caption = `*About:* ${about}\n*Last Seen:* ${lastSeen}`;
+await client.sendMessage(message.jid, {
+    image: { url: pfp },
+    mimetype: "image/png",
+    caption: caption
+}, { quoted: message.data });
+});
