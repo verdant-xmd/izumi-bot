@@ -80,8 +80,8 @@ izumi({
         author: config.STICKER_PACKNAME.split(/[,;]/)[1] || "",
         packname: config.STICKER_PACKNAME.split(/[,;]/)[0] || "",
         categories: config.STICKER_PACKNAME.split(";")[2] || "",
-        android: "https://github.com/mask-sir/",
-        ios: "https://github.com/mask-sir/"
+        android: "https://github.com/Akshay-Eypz/",
+        ios: "https://github.com/Akshay-Eypz/"
       };
     }
     let stickerBuffer = await addExif(q, exif);
