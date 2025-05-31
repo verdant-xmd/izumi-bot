@@ -6,7 +6,45 @@ const checkPermissions = async (message) => {
     if (!config.ADMIN_ACCESS) return false;
     return await message.isAdmin(message.sender);
 };
+izumi({
+    pattern: 'ginfo ?(.*)',
+    fromMe: true,
+    desc: 'get group info',
+    type: 'group',
+}, async (message, match, client) => {
+let input = match || (message.reply_message && message.reply_message.text) || message.jid;
+let metadata;
+let id, name, desc;
+if (input.includes('chat.whatsapp.com/')) {
+    let inviteCode = input.split('chat.whatsapp.com/')[1].trim();
+    metadata = await client.groupGetInviteInfo(inviteCode);
+    id = metadata.id;
+    name = metadata.subject;
+    desc = metadata.desc || "No description.";
+} else if (input.includes('@g.us')) {
+    metadata = await client.groupMetadata(input);
+    id = metadata.id;
+    name = metadata.subject;
+    desc = metadata.desc || "No description.";
+} else {
+    return await message.reply("Invalid input. Please provide a group JID or invite link.");
+}
 
+let caption = `*Name*: ${name}\n*Description*: ${desc}`;
+let pfp;
+
+try {
+    pfp = await client.profilePictureUrl(id, 'image');
+} catch (e) {
+    pfp = "https://cdn.eypz.ct.ws/url/15-05-25_06-18_w9fi.png";
+}
+
+await client.sendMessage(m.jid, {
+    image: { url: pfp },
+    mimetype: "image/png",
+    caption: caption,
+}, { quoted: message.data })
+});
 izumi({
     pattern: "promote ?(.*)",
     fromMe: false,
