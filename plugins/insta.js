@@ -12,7 +12,7 @@ const fetch = require("node-fetch");
             return await message.reply("Please provide a valid Instagram URL.");
         }
 
-        const igApi = `https://api.siputzx.my.id/api/d/igdl?url=${url}`;
+        const igApi = `https://api.eypz.ct.ws/api/dl/instagram?url=${url}`;
         const res = await fetch(igApi);
         if (!res.ok) {
             return await message.reply("Please try again.");
