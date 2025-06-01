@@ -97,8 +97,8 @@ izumi({
         author: splitMatch[1] ? splitMatch[1] : "",
         packname: splitMatch[0] ? splitMatch[0] : "",
         categories: config.STICKER_PACKNAME.split(";")[2] || "",
-        android: "https://github.com/mask-sir/",
-        ios: "https://github.com/mask-sir/"
+        android: "https://github.com/Akshay-Eypz/",
+        ios: "https://github.com/Akshay-Eypz/"
       };
     } else {
       exif = {
