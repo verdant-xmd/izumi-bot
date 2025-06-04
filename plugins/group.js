@@ -481,3 +481,23 @@ await client.sendMessage(message.jid, {
     caption: caption
 }, { quoted: message.data });
 });
+
+izumi({
+  pattern: 'gjid$',
+  fromMe: true,
+  desc: 'Shows all group names, JIDs, and member counts',
+  type: 'group'
+}, async (message, match, client) => {
+  const groups = await client.groupFetchAllParticipating();
+  let text = '*Group Info*\n\n';
+
+  for (const jid in groups) {
+    const group = groups[jid];
+    const groupName = group.subject || 'Unknown';
+    const memberCount = group.participants?.length || group.size || 0;
+
+    text += `*Name:* ${groupName}\n*JID:* ${jid}\n*Members:* ${memberCount}\n\n`;
+  }
+
+  await message.reply(text.trim());
+});
