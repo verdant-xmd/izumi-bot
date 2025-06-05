@@ -552,3 +552,26 @@ izumi({
     console.error('Group Description Error:', err);
   }
 });
+
+izumi({
+  pattern: 'updatesubject ?(.*)',
+  fromMe: true,
+  desc: 'Update group subject',
+  type: 'group'
+}, async (message, match, client) => {
+  if (!message.isGroup) {
+    return await message.reply('This command only works in groups.');
+  }
+
+  if (!match) {
+    return await message.reply('Please provide a new group subject.\n\nExample:\n.updatesubject My New Group Name');
+  }
+
+  try {
+    await client.groupUpdateSubject(message.jid, match.trim());
+    await message.reply('Group subject updated successfully.');
+  } catch (err) {
+    await message.reply('Failed to update group subject.');
+    console.error('Group Subject Update Error:', err);
+  }
+});
