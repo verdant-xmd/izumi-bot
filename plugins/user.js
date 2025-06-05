@@ -229,3 +229,44 @@ izumi({
   await message.reply(`Profile picture privacy updated to *${value}*.`);
 });
 
+izumi({
+  pattern: 'statusprivacy ?(.*)',
+  fromMe: true,
+  desc: 'Update status privacy',
+  type: 'user'
+}, async (message, match, client) => {
+  const value = match.trim();
+  if (!['all', 'contacts', 'contact_blacklist', 'none'].includes(value)) {
+    return await message.reply('Use: all | contacts | contact_blacklist | none');
+  }
+  await client.updateStatusPrivacy(value);
+  await message.reply(`Status privacy updated to *${value}*.`);
+});
+
+izumi({
+  pattern: 'readprivacy ?(.*)',
+  fromMe: true,
+  desc: 'Update read receipts privacy',
+  type: 'user'
+}, async (message, match, client) => {
+  const value = match.trim();
+  if (!['all', 'none'].includes(value)) {
+    return await message.reply('Use: all | none');
+  }
+  await client.updateReadReceiptsPrivacy(value);
+  await message.reply(`Read receipts privacy updated to *${value}*.`);
+});
+
+izumi({
+  pattern: 'groupprivacy ?(.*)',
+  fromMe: true,
+  desc: 'Update group add privacy',
+  type: 'user'
+}, async (message, match, client) => {
+  const value = match.trim();
+  if (!['all', 'contacts', 'contact_blacklist'].includes(value)) {
+    return await message.reply('Use: all | contacts | contact_blacklist');
+  }
+  await client.updateGroupsAddPrivacy(value);
+  await message.reply(`Group add privacy updated to *${value}*.`);
+});
