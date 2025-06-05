@@ -185,3 +185,17 @@ if (!match || match.trim() === '') {
     edit: message.quoted.data.key
   });
 });
+
+izumi({
+  pattern: 'setlastseen ?(.*)',
+  fromMe: true,
+  desc: 'Update last seen privacy',
+  type: 'user'
+}, async (message, match, client) => {
+  const value = match.trim();
+  if (!['all', 'contacts', 'contact_blacklist', 'none'].includes(value)) {
+    return await message.reply('Use: all | contacts | contact_blacklist | none');
+  }
+  await client.updateLastSeenPrivacy(value);
+  await message.reply(`Last seen privacy updated to *${value}*.`);
+});
