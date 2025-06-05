@@ -146,7 +146,7 @@ izumi(
 );
 
 izumi({
-  pattern: 'pinmsg',
+  pattern: 'pinmsg$',
   fromMe: true,
   desc: 'pin message',
   type: 'user'
@@ -165,4 +165,23 @@ izumi({
       }
     }
   );
+});
+
+izumi({
+  pattern: 'edit ?(.*)',
+  fromMe: true,
+  desc: 'edit a text message',
+  type: 'user'
+}, async (message, match, client) => {
+  if (!message.quoted) {
+    return await message.reply('_*Reply to any message.*_');
+  }
+if (!match || match.trim() === '') {
+    return await message.reply('_*Please provide the new text to update.*_ Example: .edit hello world!');
+  }
+
+  await client.sendMessage(message.jid, {
+    text: match.trim(),
+    edit: message.quoted.data.key
+  });
 });
