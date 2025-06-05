@@ -528,3 +528,27 @@ izumi({
     console.error('Group Create Error:', e);
   }
 });
+
+
+izumi({
+  pattern: 'updatedesc ?(.*)',
+  fromMe: true,
+  desc: 'Update group description',
+  type: 'group'
+}, async (message, match, client) => {
+  if (!message.isGroup) {
+    return await message.reply('_*This command works only in groups.*_');
+  }
+
+  if (!match) {
+    return await message.reply('_*Please provide a group description.*_\n\nExample:\n.updatedesc This is a cool group!');
+  }
+
+  try {
+    await client.groupUpdateDescription(message.jid, match.trim());
+    await message.reply(' *Group description updated successfully!*');
+  } catch (err) {
+    await message.reply('_ Failed to update group description._');
+    console.error('Group Description Error:', err);
+  }
+});
