@@ -214,3 +214,18 @@ izumi({
   await client.updateOnlinePrivacy(value);
   await message.reply(`Online privacy updated to *${value}*.`);
 });
+
+izumi({
+  pattern: 'ppprivacy ?(.*)',
+  fromMe: true,
+  desc: 'Update profile picture privacy',
+  type: 'user'
+}, async (message, match, client) => {
+  const value = match.trim();
+  if (!['all', 'contacts', 'contact_blacklist', 'none'].includes(value)) {
+    return await message.reply('Use: all | contacts | contact_blacklist | none');
+  }
+  await client.updateProfilePicturePrivacy(value);
+  await message.reply(`Profile picture privacy updated to *${value}*.`);
+});
+
