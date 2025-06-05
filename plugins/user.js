@@ -187,7 +187,7 @@ if (!match || match.trim() === '') {
 });
 
 izumi({
-  pattern: 'setlastseen ?(.*)',
+  pattern: 'lastseen ?(.*)',
   fromMe: true,
   desc: 'Update last seen privacy',
   type: 'user'
@@ -198,4 +198,19 @@ izumi({
   }
   await client.updateLastSeenPrivacy(value);
   await message.reply(`Last seen privacy updated to *${value}*.`);
+})
+
+
+izumi({
+  pattern: 'onlineprivacy ?(.*)',
+  fromMe: true,
+  desc: 'Update online privacy',
+  type: 'user'
+}, async (message, match, client) => {
+  const value = match.trim();
+  if (!['all', 'match_last_seen'].includes(value)) {
+    return await message.reply('Use: all | match_last_seen');
+  }
+  await client.updateOnlinePrivacy(value);
+  await message.reply(`Online privacy updated to *${value}*.`);
 });
