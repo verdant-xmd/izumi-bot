@@ -1,6 +1,6 @@
 {
   "name": "izumi-bot",
-  "version": "3.8.1",
+  "version": "3.8.2",
   "description": "Izumi simple multi device WhatsApp Bot.",
   "main": "./index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Akshay-Eypz/izumi-bot#readme",
   "dependencies": {
-    "@adiwajshing/baileys": "github:Akshay-Eypz/Baileys",
+    "@adiwajshing/baileys": "github:Akshay-Eypz/Baileys-pro",
     "@adiwajshing/keyed-db": "^0.2.4",
     "acrcloud": "^1.4.0",
     "axios": "^1.6.0",
