@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const { exec } = require("child_process");
-const { izumi, mode, searchAndSendYouTubeOptions, sendYtResults } = require("../lib");
+const { izumi, mode, searchAndSendYouTubeOptions, sendYtResults, sendSpotifyResults } = require("../lib");
 
 async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
   try {
@@ -222,10 +222,49 @@ izumi({
 
 izumi({
     pattern: 'yts ?(.*)',
-    fromMe: true,
+    fromMe: mode,
     desc: 'Search YouTube videos',
     type: 'search'
 }, async (message, match, client) => {
     if (!match) return await message.reply('Please provide a search query.');
     await sendYtResults(match, message.jid, client, message.data);
+});
+izumi({
+    pattern: 'sps ?(.*)',
+    fromMe: mode,
+    desc: 'Spotify search ',
+    type: 'search'
+}, async (message, match, client) => {
+    if (!match) return await message.reply('Please provide a search query.');
+    await sendSpotifyResults(match, message.jid, client, message.data);
+});
+
+izumi({
+  pattern: 'spotify ?(.*)',
+  fromMe: mode,
+  desc: 'Spotify download',
+  type: 'downloader'
+}, async (message, match, client) => {
+  const res = await axios.get(`https://api.eypz.ct.ws/api/dl/spotify?url=${match}`);
+  const dl = res.data.result.stream_url;
+  const info = res.data.result;
+
+  await message.client.sendMessage(message.jid, {
+    audio: {
+      url: dl
+    },
+    mimetype: 'audio/mpeg',
+    contextInfo: {
+      forwardingScore: 999,
+      isForwarded: true,
+      externalAdReply: {
+        title: info.title,
+        body: info.artist,
+        thumbnailUrl: info.thumbnail,
+        mediaType: 2,
+        mediaUrl: match,
+        sourceUrl: match
+      }
+    }
+  }, { quoted: message.data });
 });
