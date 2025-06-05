@@ -138,6 +138,35 @@ await message.client.sendMessage(message.jid, {
 }, { quoted: message.data });
 fs.unlinkSync(filename);
 });
+izumi({
+  pattern: "toGif",
+  fromMe: mode,
+  desc: "convert video to ptv",
+  type: "converter",
+}, async (message, client) => {
+
+if (!message.reply_message || !message.reply_message.video) {
+      return await message.reply('*Reply to an video!*');
+}
+const mediaBuffer = await message.quoted.download("buffer");
+const ext = 'mp4';
+const filename = 'temp.mp4';
+
+fs.writeFileSync(filename, mediaBuffer);
+
+const formData = new FormData();
+formData.append('reqtype', 'fileupload');
+formData.append('fileToUpload', fs.createReadStream(filename), {
+  filename,
+  contentType: 'video/mp4'
+});
+await message.client.sendMessage(message.jid, {
+  video: fs.readFileSync(filename),
+  mimetype: 'video/mp4',
+  gifPlayback: true
+}, { quoted: message.data });
+fs.unlinkSync(filename);
+});
  izumi({
   pattern: "mp3",
   fromMe: mode,
