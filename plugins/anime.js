@@ -6,7 +6,7 @@ izumi({
   pattern: "searchanime (.*)$",
   fromMe: mode,
   desc: 'Search for anime and display results',
-  type: 'anime'
+  type: 'Anime'
 }, async (message, match, client) => {
   const myr = match;
   const [query, limit] = myr.split(",");
