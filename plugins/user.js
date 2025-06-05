@@ -146,23 +146,23 @@ izumi(
 );
 
 izumi({
-	pattern: 'pinmsg',
-	fromMe: true,
-	desc: 'pin message',
-	type: 'user'
+  pattern: 'pinmsg',
+  fromMe: true,
+  desc: 'pin message',
+  type: 'user'
 }, async (message, match, client) => {
-	if (!message.quoted) {
-  return await message.reply('_*Reply to any message.*_');
-}
-
-await message.client.sendMessage(
-  m.jid,
-  {
-    pin: {
-      type: 1,
-      time: 86400,
-      key: message.quoted.data.key
-    }
+  if (!message.quoted) {
+    return await message.reply('_*Reply to any message.*_');
   }
-)
+
+  await message.client.sendMessage(
+    message.jid,
+    {
+      pin: {
+        type: 1,
+        time: 2592000,
+        key: message.quoted.data.key
+      }
+    }
+  );
 });
