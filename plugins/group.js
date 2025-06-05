@@ -501,3 +501,30 @@ izumi({
 
   await message.reply(text.trim());
 });
+
+izumi({
+  pattern: 'createg ?(.*)',
+  fromMe: true,
+  desc: 'Create WhatsApp group',
+  type: 'group'
+}, async (message, match, client) => {
+  try {
+    if (!match) return await message.reply('_*Example:*_ `.createg MyGroup,9170xxxxx;9190xxxxx`');
+
+    let [name, numbers] = match.split(',');
+    name = name?.trim() || 'New Group';
+    
+    let participants = [];
+    if (numbers) {
+      participants = numbers.split(';')
+        .map(num => num.replace(/\D/g, '') + '@s.whatsapp.net')
+        .filter(jid => jid.length > 15);
+    }
+
+    const group = await client.groupCreate(name, participants);
+    await message.reply(`Group *${name}* created!\n\n *Participants Added:* ${participants.length}`);
+  } catch (e) {
+    await message.reply('_Failed to create group._');
+    console.error('Group Create Error:', e);
+  }
+});
