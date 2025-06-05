@@ -1,6 +1,7 @@
 const { izumi,mode, isAdmin, formatTime,parsedJid} = require("../lib");
 const { downloadContentFromMessage } = require('@adiwajshing/baileys');
-const config = require('../config'); // adjust the path if needed
+const config = require('../config');
+
 izumi(
   {
     pattern: 'block ?(.*)',
@@ -143,3 +144,25 @@ izumi(
 		await message.forwardMessage(message.sender, message.quoted.data);
 	}
 );
+
+izumi({
+	pattern: 'pinmsg',
+	fromMe: true,
+	desc: 'pin message',
+	type: 'user'
+}, async (message, match, client) => {
+	if (!message.quoted) {
+  return await message.reply('_*Reply to any message.*_');
+}
+
+await message.client.sendMessage(
+  m.jid,
+  {
+    pin: {
+      type: 1,
+      time: 86400,
+      key: message.quoted.data.key
+    }
+  }
+)
+});
