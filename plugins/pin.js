@@ -1,6 +1,7 @@
 const { izumi, mode, getJson } = require("../lib");
 const config = require("../config");
 const gis = require("../lib/gis");
+const axios = require("axios");
 izumi(
   {
     pattern: "pinterest ?(.*)",
@@ -42,19 +43,23 @@ izumi({
   const searchTerm = match;
   const results = await gis(searchTerm);
   const validImageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp)$/i;
+
   const imageUrls = results
     .map(r => r.url)
     .filter(url => validImageExtensions.test(url))
     .slice(0, 5);
+
   if (imageUrls.length === 0) {
     return message.reply("No valid image URLs found.");
   }
+
   for (const url of imageUrls) {
     try {
-      const buffer = (await axios.get(url, { responseType: "arraybuffer" })).data;
-      await client.sendMessage(message.jid, { image: buffer, caption: `Result for: ${searchTerm}` }, { quoted: message.data });
+      await message.sendFromUrl(url, {
+        caption: `Result for: *${searchTerm}*`,
+      }, { quoted: message.data });
     } catch (err) {
-      console.warn(`Failed to send image from: ${url}`);
+      console.warn(`failed to send image from: ${url}`);
     }
   }
 });
