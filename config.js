@@ -29,7 +29,7 @@ module.exports = {
   AUTO_STATUS_VIEW: toBool(process.env.AUTO_STATUS_VIEW) || false,
   SESSION_ID: process.env.SESSION_ID || "izumi session",
   MENU_URL: process.env.MENU_URL || "https://cdn.eypz.ct.ws/url/15-05-25_06-18_w9fi.png",
-  MENU_TYPE: process.env.MENU_TYPE || "normal"
+  MENU_TYPE: process.env.MENU_TYPE || "normal",
   CAPTION: process.env.CAPTION || "Made with 🤍",
   READ_MSG: toBool(process.env.READ_MSG),
   OWNER_NAME: process.env.OWNER_NAME || "Eʏᴘᴢ",
