@@ -1,5 +1,5 @@
 const { izumi, mode, parsedJid } = require("../lib/");
-const gif = "https://eypz.koyeb.app/api/gif/";
+const gif = "https://api.eypz.ct.ws/api/gif/";
 
 // Surprise Reaction
 izumi({
