@@ -106,3 +106,22 @@ izumi(
       
   }
 );
+
+izumi({
+  pattern: 'shorturl ?(.*)',
+  fromMe: true,
+  desc: 'Shorten URLs',
+  type: 'generator'
+}, async (message, match, client) => {
+  if (!match) return await message.reply('Please provide a URL to shorten.');
+const longUrl = match.trim();
+const res = await axios.post('https://i.opz.rf.gd/shorten', {
+  url: longUrl,
+  apikey: 'izumi-x-api'
+}, {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+await message.reply(res.data.short_url)
+})
