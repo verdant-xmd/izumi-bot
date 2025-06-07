@@ -1,13 +1,45 @@
 const { izumi, mode, isAdmin, sleep, parsedJid } = require("../lib/");
 const config = require("../config");
 const antiwordCheck = require('../lib/antiword');
+const antiLinkCheck = require('../lib/antilink');
 const { setAntiword } = require('../lib/database/antiword');
+const { setAntiLink, getAntiLink } = require('../lib/database/antilink');
 const checkPermissions = async (message) => {
     if (message.isSudo) return true;
     if (!config.ADMIN_ACCESS) return false;
     return await message.isAdmin(message.sender);
 };
+izumi({
+  pattern: 'antilink ?(.*)',
+  fromMe: true,
+  desc: 'Enable or disable anti-link in a group',
+  type: 'group'
+}, async (message, match) => {
+  const input = match?.trim()?.toLowerCase();
 
+  if (!message.isGroup) {
+    return await message.reply('_This command works only in groups._');
+  }
+
+  if (input === 'on') {
+    await setAntiLink({ jid: message.jid, isEnable: true });
+    return await message.reply(' AntiLink has been *enabled* in this group.');
+  }
+
+  if (input === 'off') {
+    await setAntiLink({ jid: message.jid, isEnable: false });
+    return await message.reply(' AntiLink has been *disabled* in this group.');
+  }
+
+  return await message.reply('Usage:\n.antilink on\n.antilink off');
+});
+izumi({
+  on: 'text',
+  fromMe: false,
+  dontAddCommandList: true
+}, async (message, match, client) => {
+  await antiLinkCheck(message, client);
+});
 izumi({
   pattern: 'antiword ?(on|off)?',
   fromMe: true,
