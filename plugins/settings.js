@@ -163,45 +163,29 @@ izumi(
   }
 );
 
-izumi(
-  {
-    pattern: "update now$",
-    fromMe: true,
-    dontAddCommandList: true,
-    desc: "Updates Izumi",
-  },
-  async (message) => {
-    try {
-      await git.fetch();
-      const commits = await git.log([`${Config.BRANCH}..origin/${Config.BRANCH}`]);
-
-      if (commits.total === 0) {
-        return await message.reply("_Already on the latest version_");
-      }
-
-      await message.reply("_Updating..._");
-      const update = await git.pull();
-
-      if (update.summary.changes > 0) {
-        await message.reply("*_UPDATED_*");
-        await message.reply("_Installing dependencies and restarting..._");
-
-        exec("npm install", async (err, stdout, stderr) => {
-          if (err) {
-            return message.reply(`*npm install failed:*\n\`\`\`${stderr}\`\`\``);
-          }
-
-          await message.reply("_Restarting bot..._");
-          process.exit(0);
-        });
-      } else {
-        await message.reply("_No changes to apply_");
-      }
-    } catch (err) {
-      await message.reply(`*Update failed:*\n\`\`\`${err.message || err}\`\`\``);
-    }
-  }
-);
+izumi( { 
+	pattern: "update now$", 
+	fromMe: true,
+	dontAddCommandList: true,
+	desc: "Updates Izumi", },
+      async (message) => {
+	      await git.fetch();
+	      var commits = await git.log([Config.BRANCH + "..origin/" + Config.BRANCH]);
+	      if (commits.total === 0) { return await message.reply("Already on the latest version");
+				       } else {
+		      await message.reply("Updating");
+		      git.pull(async (err, update) => {
+			      if (update && update.summary.changes) {
+				      await message.reply("*_UPDATED_*");
+				      await message.reply("_Bot restarting, wait for some time_");
+				      exec("npm install").stderr.pipe(process.stderr);
+				      return require('pm2').restart('index.js');
+			      } else if (err) {
+				      await message.reply("* Update failed!*\n*Error:* ```" + err + "```");
+			      }
+		      });
+	      }
+      });
 izumi({
 	pattern: 'reboot$',
 	fromMe: true,
