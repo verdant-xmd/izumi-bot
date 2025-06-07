@@ -268,5 +268,5 @@ izumi({
     return await message.reply('Use: all | contacts | contact_blacklist');
   }
   await client.updateGroupsAddPrivacy(value);
-  await message.reply(`Group add privacy updated to *${value}*.`);
+  await message.reply(`_Group add privacy updated to *${value}*._`);
 });
