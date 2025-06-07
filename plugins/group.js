@@ -1,11 +1,40 @@
 const { izumi, mode, isAdmin, sleep, parsedJid } = require("../lib/");
 const config = require("../config");
-
+const antiwordCheck = require('../lib/antiword');
+const { setAntiword } = require('../lib/database/antiword');
 const checkPermissions = async (message) => {
     if (message.isSudo) return true;
     if (!config.ADMIN_ACCESS) return false;
     return await message.isAdmin(message.sender);
 };
+
+izumi({
+  pattern: 'antiword ?(on|off)?',
+  fromMe: true,
+  desc: 'Toggle antiword on/off in group',
+  type: 'group'
+}, async (message, match, client) => {
+  if (!message.isGroup) return await message.reply('This command only works in groups.');
+
+  const arg = match?.toLowerCase();
+
+  if (!arg || (arg !== 'on' && arg !== 'off')) {
+    return await message.reply('Usage: .antiword on / .antiword off');
+  }
+
+  const isEnable = arg === 'on';
+  await setAntiword({ jid: message.jid, isEnable });
+
+  await message.reply(`Antiword ${isEnable ? 'enabled' : 'disabled'} in this group.`);
+});
+
+izumi({
+  on: "text",
+  fromMe: false,
+  dontAddCommandList: true
+}, async (message, match, client) => {
+  await antiwordCheck(message, client);
+});
 izumi({
     pattern: 'ginfo ?(.*)',
     fromMe: true,
