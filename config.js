@@ -21,6 +21,7 @@ module.exports = {
   BRANCH: "main",
   ADMIN_ACCESS: toBool(process.env.ADMIN_ACCESS) || false,
   MODE: (process.env.MODE || 'private').toLowerCase(),
+  ANTI_WORD: process.env.ANTI_WORD || "fuck",
   ERROR_MSG: toBool(process.env.ERROR_MSG) || true,
   LOG_MSG: toBool(process.env.LOG_MSG) || true,
   READ_CMD: toBool(process.env.READ_CMD),
