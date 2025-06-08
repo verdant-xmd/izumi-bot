@@ -140,26 +140,26 @@ izumi({
 });
 
 
-izumi ({
+izumi({
     pattern: "onepiece",
     fromMe: mode,
     desc: "random one-piece anime videos",
     type: "Anime",
 }, async (message, match) => {
-const url = apiUrl + 'https://izumi-api.vercel.app/api/onepiece'
-  message.sendFromUrl(url, {},
-    caption: `${config.CAPTION}`
-  });
+    const url = 'https://izumi-api.vercel.app/api/onepiece';
+    await message.sendFromUrl(url, {
+        caption: `${config.CAPTION}`
+    });
 });
 
-izumi ({
+izumi({
     pattern: "naruto$",
     fromMe: mode,
     desc: "random demonslayer anime video",
     type: "Anime",
 }, async (message, match) => {
-const url = apiUrl + 'https://izumi-api.vercel.app/api/naruto'
-  message.sendFromUrl(url, {},
-    caption: `${config.CAPTION}`
-  });
+    const url = 'https://izumi-api.vercel.app/api/naruto';
+    await message.sendFromUrl(url, {
+        caption: `${config.CAPTION}`
+    });
 });
