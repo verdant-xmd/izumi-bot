@@ -55,9 +55,7 @@ izumi({
 
   for (const url of imageUrls) {
     try {
-      await message.sendFromUrl(url, {
-        caption: `Result for: *${searchTerm}*`,
-      }, { quoted: message.data });
+      await message.sendFromUrl(url, {}, { quoted: message.data });
     } catch (err) {
       console.warn(`failed to send image from: ${url}`);
     }
