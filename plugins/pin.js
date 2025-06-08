@@ -16,7 +16,7 @@ izumi(
         await message.reply("Please provide a Pinterest URL", {}, "text", message);
         return;
       }
-      const result = await getJson(`https://eypz.koyeb.app/api/dl/pin?url=${match}`);
+      const result = await getJson(`https://api.eypz.ct.ws/api/dl/pin?url=${match}`);
       if (!result || result.status !== "success" || !result.media_urls) {
         await message.reply("Invalid response from the API", {}, "text", message);
         return;
