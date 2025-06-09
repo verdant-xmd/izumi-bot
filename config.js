@@ -47,6 +47,8 @@ module.exports = {
   HEROKU_APP_NAME: process.env.HEROKU_APP_NAME || "",
   HEROKU_API_KEY: process.env.HEROKU_API_KEY || "",
   KOYEB_API_KEY: process.env.KOYEB_API_KEY || "api",
+  RENDER_API_KEY: process.env.RENDER_API_KEY || "",
+  RENDER_SERVICE_ID: process.env_RENDER_SERVICE_ID || "",
   KOYEB_APP_NAME: process.env.KOYEB_APP_NAME || "name",
   KOYEB: toBool(process.env.KOYEB) || false,
   HEROKU: toBool(process.env.HEROKU) || false,
