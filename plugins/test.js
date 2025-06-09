@@ -24,12 +24,12 @@ izumi({
 
   // 🔍 Detect if hosted on Render by checking __dirname prefix
   if (__dirname.startsWith("/rndr")) {
-    if (!process.env.RENDER_SERVICE_ID || !Config.RENDER_API_KEY) {
+    if (!Config.RENDER_SERVICE_ID || !Config.RENDER_API_KEY) {
       return await message.reply("Render environment detected but `RENDER_SERVICE_ID` or `RENDER_API_KEY` is missing.");
     }
 
     await message.reply("🚀 *Render deploy initiated...*");
-    await deployLatestCommit(process.env.RENDER_SERVICE_ID, Config.RENDER_API_KEY);
+    await deployLatestCommit(Config.RENDER_SERVICE_ID, Config.RENDER_API_KEY);
     return await message.reply("*Render deployment triggered. Monitor status in the dashboard.*");
   }
 
