@@ -1,4 +1,4 @@
-const { izumi, PREFIX } = require('../lib/');
+/*const { izumi, PREFIX } = require('../lib/');
 const config = require('../config');
 const simpleGit = require('simple-git');
 const git = simpleGit();
@@ -90,3 +90,4 @@ izumi({
         await message.send(`Error: ${error.message}`);
     }
 });
+*/
