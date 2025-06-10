@@ -136,56 +136,7 @@ izumi(
   }
 );
 
-izumi(
-  {
-    pattern: "update$",
-    fromMe: true,
-    dontAddCommandList: true, 
-    desc: "Checks for updates.",
-  },
-  async (message) => {
-    await git.fetch();
-    var commits = await git.log([Config.BRANCH + "..origin/" + Config.BRANCH]);
 
-    if (commits.total === 0) {
-      await message.reply("Already on the latest version.");
-      return;
-    }
-
-    var updates = "Update Available\n\nChanges:\n";
-    updates += "--------------------------------------\n";
-    updates += commits.all
-      .map(commit => `[${commit.date.substring(0, 10)}] ${commit.message}`)
-      .join("\n");
-    updates += "\n--------------------------------------";
-
-    await message.reply(updates);
-  }
-);
-
-izumi( { 
-	pattern: "update now$", 
-	fromMe: true,
-	dontAddCommandList: true,
-	desc: "Updates Izumi", },
-      async (message) => {
-	      await git.fetch();
-	      var commits = await git.log([Config.BRANCH + "..origin/" + Config.BRANCH]);
-	      if (commits.total === 0) { return await message.reply("Already on the latest version");
-				       } else {
-		      await message.reply("Updating");
-		      git.pull(async (err, update) => {
-			      if (update && update.summary.changes) {
-				      await message.reply("*_UPDATED_*");
-				      await message.reply("_Bot restarting, wait for some time_");
-				      exec("npm install").stderr.pipe(process.stderr);
-				      return require('pm2').restart('index.js');
-			      } else if (err) {
-				      await message.reply("* Update failed!*\n*Error:* ```" + err + "```");
-			      }
-		      });
-	      }
-      });
 izumi({
 	pattern: 'reboot$',
 	fromMe: true,
