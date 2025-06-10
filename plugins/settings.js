@@ -7,7 +7,7 @@ const simpleGit = require("simple-git");
 const git = simpleGit();
 const exec = require("child_process").exec;
 
-izumi(
+/*izumi(
   {
     pattern: "setvar ?(.*)",
     fromMe: true,
@@ -136,7 +136,7 @@ izumi(
   }
 );
 
-
+*/
 izumi({
 	pattern: 'reboot$',
 	fromMe: true,
