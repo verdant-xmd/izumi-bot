@@ -1,3 +1,4 @@
+const { izumi,mode } = require('../lib/');
 const simpleGit = require('simple-git');
 const axios = require('axios');
 const { exec } = require('child_process');
@@ -91,8 +92,8 @@ izumi({
 
   if (isRenderProject) {
     await message.reply("Deploying via Render...");
-    const serviceId = Config.RENDER_SERVICE_ID;
-    const apiKey = Config.RENDER_API_KEY;
+    const serviceId = process.env.RENDER_SERVICE_ID;
+    const apiKey = process.env.RENDER_API_KEY;
 
     if (!serviceId || !apiKey) {
       return await message.reply("Missing RENDER_SERVICE_ID or RENDER_API_KEY.");
