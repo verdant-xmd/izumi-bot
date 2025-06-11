@@ -1,4 +1,5 @@
 const { izumi, getJson, mode } = require("../lib");
+
 izumi({
     pattern: 'gpt3 ?(.*)',
     fromMe: mode,
