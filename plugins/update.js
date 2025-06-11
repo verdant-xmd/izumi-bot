@@ -7,7 +7,6 @@ const git = simpleGit();
 const Config = require("../config");
 const isRenderProject = __dirname.startsWith('/rndr');
 const isLocalBotProject = __dirname.startsWith('/bot');
-
 async function deployLatestCommit(serviceId, apiKey) {
   if (!serviceId || !apiKey) {
     console.error("RENDER_SERVICE_ID or RENDER_API_KEY missing");
