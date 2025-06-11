@@ -5,8 +5,9 @@ const { exec } = require('child_process');
 const pm2 = require('pm2');
 const git = simpleGit();
 const Config = require("../config");
-const isRenderProject = __dirname.startsWith('/rndr');
-const isLocalBotProject = __dirname.startsWith('/bot');
+const dir = __dirname;
+const isRenderProject = dir.includes('/rndr/') || dir.includes('/opt/render/project/src');
+const isLocalBotProject = !isRenderProject;
 async function deployLatestCommit(serviceId, apiKey) {
   if (!serviceId || !apiKey) {
     console.error("RENDER_SERVICE_ID or RENDER_API_KEY missing");
@@ -99,7 +100,7 @@ izumi({
     }
 
     await deployLatestCommit(serviceId, apiKey);
-    return await message.reply("Render deploy initiated!");
+    return await message.reply("Render deployment initiated!\nThis may take 2 to 5 minutes to complete...");
   }
   if (isLocalBotProject) {
     await message.reply("Updating local PM2 project...");
