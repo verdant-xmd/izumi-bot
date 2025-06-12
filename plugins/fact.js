@@ -187,7 +187,7 @@ const jpegThumbnail = await sharp(imageBuffer)
   .jpeg()
   .toBuffer();
 
-await message.client.sendMessage(m.jid, {
+await message.client.sendMessage(message.jid, {
   document: { url: "https://files.catbox.moe/b98vh9.png" },
   fileName: "izumi.jpeg",
   mimetype: "image/jpeg",
