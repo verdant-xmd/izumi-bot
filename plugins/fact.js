@@ -1,5 +1,7 @@
 const { izumi, mode, getJson } = require("../lib/");
 const config = require("../config");
+const axios = require("axios");
+const sharp = require("sharp");
 
 izumi(
     {
@@ -12,23 +14,23 @@ izumi(
         try {
             let factCommands = "*HERE ARE THE AVAILABLE COMMANDS:*\n\n";
             factCommands += "╭─────────────┈⚆\n";
-            factCommands += "│  *1. サ Animal Fact: `.animal-fact`*\n";
+            factCommands += "│  *1. サ Animal Fact: `.animalfact`*\n";
             factCommands += "│─╖\n";
             factCommands += "│ Fetches a random animal fact.\n";
             factCommands += "╰─────────────┈⚆\n";
-            factCommands += "│  *2. サ Tech Fact: `.tech-fact`*\n";
+            factCommands += "│  *2. サ Tech Fact: `.techfact`*\n";
             factCommands += "│─╖\n";
             factCommands += "│ Fetches a random technology fact.\n";
             factCommands += "╰─────────────┈⚆\n";
-            factCommands += "│  *3. サ Space Fact: `.space-fact`*\n";
+            factCommands += "│  *3. サ Space Fact: `.spacefact`*\n";
             factCommands += "│─╖\n";
             factCommands += "│ Fetches a random space fact.\n";
             factCommands += "╰─────────────┈⚆\n";
-            factCommands += "│  *4. サ History Fact: `.history-fact`*\n";
+            factCommands += "│  *4. サ History Fact: `.historyfact`*\n";
             factCommands += "│─╖\n";
             factCommands += "│ Fetches a random history fact.\n";
             factCommands += "╰─────────────┈⚆\n";
-            factCommands += "│  *5. サ Cat Fact: `.cat-fact`*\n";
+            factCommands += "│  *5. サ Cat Fact: `.catfact`*\n";
             factCommands += "│─╖\n";
             factCommands += "│ Fetches a random cat fact.\n";
             factCommands += "╰─────────────┈⚆";
@@ -82,7 +84,7 @@ const fetchFact = async (url, formattedMessage, message) => {
 
 izumi(
     {
-        pattern: "animal-fact",
+        pattern: "animalfact",
         fromMe: mode,
         desc: "Fact about animals",
         type: "info",
@@ -98,7 +100,7 @@ izumi(
 
 izumi(
     {
-        pattern: "tech-fact",
+        pattern: "techfact",
         fromMe: mode,
         desc: "Fact about technology",
         type: "info",
@@ -114,7 +116,7 @@ izumi(
 
 izumi(
     {
-        pattern: "space-fact",
+        pattern: "spacefact",
         fromMe: mode,
         desc: "Fact about space",
         type: "info",
@@ -130,7 +132,7 @@ izumi(
 
 izumi(
     {
-        pattern: "history-fact",
+        pattern: "historyfact",
         fromMe: mode,
         desc: "Fact about history",
         type: "info",
@@ -146,7 +148,7 @@ izumi(
 
 izumi(
     {
-        pattern: "cat-fact",
+        pattern: "catfact",
         fromMe: mode,
         desc: "Fact about cats",
         type: "info",
@@ -159,3 +161,37 @@ izumi(
         );
     }
 );
+
+izumi(
+    {
+        pattern: "explugins",
+        fromMe: true,
+        desc: "get external plugins",
+        type: "users",
+    },
+    async (message, client) => {
+        const res = await axios.get('https://raw.githubusercontent.com/Akshay-Eypz/IZUMI-EXPLUGINS/refs/heads/main/plugin.json');
+    const data = res.data;
+   let replyMsg = '';
+    for (const plugin of data.plugins) {
+      replyMsg += `*Command:* ${plugin.pattern}\n`;
+      replyMsg += `*Url:* ${plugin.url}\n`;
+      replyMsg += `*Usage:* ${plugin.usage}\n\n`;
+    }   
+const imageBuffer = await axios.get("https://files.catbox.moe/b98vh9.png", {
+  responseType: "arraybuffer"
+}).then(res => res.data);
+
+const jpegThumbnail = await sharp(imageBuffer)
+  .resize(300, 300)
+  .jpeg()
+  .toBuffer();
+
+await message.client.sendMessage(m.jid, {
+  document: { url: "https://files.catbox.moe/b98vh9.png" },
+  fileName: "izumi.jpeg",
+  mimetype: "image/jpeg",
+  caption: replyMsg.trim(),
+  jpegThumbnail: jpegThumbnail
+}, { quoted: message.data })
+    });
