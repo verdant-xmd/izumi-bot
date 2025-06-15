@@ -112,7 +112,7 @@ async function downloadAndSendAudio(message, client, videoUrl, title, videoId) {
             thumbnail: jpegThumbnail,
             mediaUrl: "https://github.com/Akshay-Eypz/izumi-bot",
             sourceUrl: "https://github.com/Akshay-Eypz/izumi-bot",
-            showAdAttribution: true,
+            showAdAttribution: false,
           },
         },
       },
