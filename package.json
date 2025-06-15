@@ -1,6 +1,6 @@
 {
   "name": "izumi-bot",
-  "version": "4.2.0",
+  "version": "4.2.3",
   "description": "Izumi simple multi device WhatsApp Bot.",
   "main": "./index.js",
   "scripts": {
@@ -26,6 +26,7 @@
   "dependencies": {
     "@adiwajshing/baileys": "npm:baileys-pro",
     "@adiwajshing/keyed-db": "^0.2.4",
+    "@google/generative-ai": "^0.24.1",
     "acrcloud": "^1.4.0",
     "axios": "^1.6.0",
     "bitly": "^4.1.1",
