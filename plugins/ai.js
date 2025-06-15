@@ -112,7 +112,7 @@ await message.client.sendMessage(
 
 
 izumi({
-  pattern: "ai ?(.*)",
+  pattern: "izumi ?(.*)",
   fromMe: mode,
   desc: "Ask  AI",
   type: "ai"
