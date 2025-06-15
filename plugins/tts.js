@@ -1,5 +1,25 @@
 const { izumi, mode, generateTTS } = require('../lib');
 
+const googleTTS = require('google-tts-api');
+izumi({
+    pattern: 'tts ?(.*)',
+    fromMe: mode,
+    desc: 'text to speech ',
+    type: 'tts',
+}, async (message, match) => {
+    const full = match || (message.reply_message && message.reply_message.text);
+    if (!full) return await message.reply("_*Need a query*_\nexample: _*.tts Hello I'm*_");
+const parts = full.includes(";") ? full.split(";") : full.split(",");
+const text = parts[0];
+const lang = parts[1] || "en";
+const url = googleTTS.getAudioUrl(text, {
+  lang: lang,
+  slow: false,
+  host: 'https://translate.google.com',
+});
+await message.sendFromUrl(url, { mimetype: 'audio/mp4', ptt: true });
+});
+
 izumi({
     pattern: 'ttsnova ?(.*)',
     fromMe: mode,
