@@ -44,6 +44,7 @@ module.exports = {
   AUTHOR: process.env.AUTHOR || "Eʏᴘᴢ",
   PRESENCE: process.env.PRESENCE || "unavailable", //available, typing, recording
   DELETED_LOG_CHAT: process.env.DELETED_LOG_CHAT || false,
+  GEMINI_API_KEY: toBool(process.env.GEMINI_API_KEY),
   HEROKU_APP_NAME: process.env.HEROKU_APP_NAME || "",
   HEROKU_API_KEY: process.env.HEROKU_API_KEY || "",
   KOYEB_API_KEY: process.env.KOYEB_API_KEY || "api",
