@@ -6,4 +6,4 @@ RUN apt-get update && \
 RUN git clone https://github.com/Akshay-Eypz/izumi-bot /root/bot
 WORKDIR /root/bot
 RUN npm install --legacy-peer-deps
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD ["npm", "start"]
