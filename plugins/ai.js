@@ -111,20 +111,35 @@ await message.client.sendMessage(
 });
 
 
+const GEMINI_HELP = `No API key found.
+
+Please get a Gemini API key from:
+https://aistudio.google.com/apikey
+
+Then set it using:
+.setvar GEMINI_API_KEY`;
+
 izumi({
   pattern: "izumi ?(.*)",
   fromMe: mode,
-  desc: "Ask  AI",
+  desc: "Ask AI",
   type: "ai"
 }, async (message, match) => {
   const prompt = match.trim();
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    return await message.reply(GEMINI_HELP);
+  }
+
   if (!prompt && !message.quoted) {
     return await message.reply("Need a prompt to start chat.");
   }
-  await chatbot(message, prompt);
+
+  await chatbot(message, prompt, apiKey);
 });
 
-// Auto-response
+// Auto-response to messages
 izumi({
   on: "text",
   fromMe: false,
@@ -142,12 +157,16 @@ izumi({
 
   if (!(isPrivate || isMentioned || isReplied)) return;
 
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return;
+
   const prompt = message.text || "";
   if (!prompt.trim()) return;
 
-  await chatbot(message, prompt);
+  await chatbot(message, prompt, apiKey);
 });
 
+// Chatbot control and gender setting
 izumi({
   pattern: "chatbot ?(.*)",
   fromMe: true,
@@ -161,7 +180,7 @@ izumi({
     const status = (await getStatus(jid)) ? "on" : "off";
     const gender = await getGender(jid);
     return await message.reply(
-      `ChatBot Settings:\n\nStatus: *${status}*\nGender: *${gender}*\n\nUsage:\n.chatBot on | off | male | female`
+      `ChatBot Settings:\n\nStatus: *${status}*\nGender: *${gender}*\n\nUsage:\n.chatbot on | off | male | female`
     );
   }
 
@@ -177,6 +196,6 @@ izumi({
 
   if (input === "male" || input === "female") {
     await setBotGender(jid, input);
-    return await message.reply(`👤 ChatBot gender set to *${input}*.`);
+    return await message.reply(`ChatBot gender set to *${input}*.`);
   }
 });
