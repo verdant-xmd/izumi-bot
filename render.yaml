@@ -4,7 +4,7 @@ services:
     repo: https://github.com/Akshay-Eypz/izumi-bot
     branch: main
     env: docker
-    dockerfilePath: Dockerfile
+    dockerfilePath: lib/Dockerfile
     plan: free
     autoDeploy: true
     envVars:
@@ -13,40 +13,22 @@ services:
         required: true
       - key: PREFIX
         sync: false
-        required: true
+        required: false
       - key: SUDO
         sync: false
         required: false
       - key: MODE
         sync: false
         required: false
-      - key: LOG_MSG
-        sync: false
-        required: false
-      - key: ERROR_MSG
-        sync: false
-        required: false
-      - key: OWNER_NAME
-        sync: false
-        required: false
-      - key: BOT_NAME
-        sync: false
-        required: false
-      - key: STICKER_PACKNAME
-        sync: false
-        required: false
-      - key: AUDIO_DATA
-        sync: false
-        required: false
-      - key: MENU_URL
-        sync: false
-        required: false
-      - key: CAPTION
-        sync: false
-        required: false
-      - key: AUTHOR
-        sync: false
-        require: false
       - key: PORT
         sync: false
-        require: true
+        required: true
+      - key: RENDER_API_KEY
+        sync: false
+        required: false
+      - key: RENDER_SERVICE_ID
+        sync: false
+        required: false
+      - key: DATABASE_URL
+        sync: false
+        required: false
