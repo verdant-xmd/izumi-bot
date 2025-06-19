@@ -79,7 +79,7 @@ izumi({
     if (!prompt) return await message.reply("_*Need a query!*_\nExample: .minigpt4o How are you?");
 
     try {
-        const text = await deepChat(prompt, 'minigpt4o');
+        const text = await deepChat(prompt, 'gpt4o-mini');
         await message.client.sendMessage(message.jid, { text, contextInfo }, { quoted: message.data });
     } catch (err) {
         await message.reply(`❌ Error: ${err.message}`);
@@ -96,7 +96,7 @@ izumi({
     if (!prompt) return await message.reply("_*Need a query!*_\nExample: .llama4scout Give me advice");
 
     try {
-        const text = await deepChat(prompt, 'llama4scout');
+        const text = await deepChat(prompt, 'llama-4-scout');
         await message.client.sendMessage(message.jid, { text, contextInfo }, { quoted: message.data });
     } catch (err) {
         await message.reply(`❌ Error: ${err.message}`);
@@ -113,7 +113,7 @@ izumi({
     if (!prompt) return await message.reply("_*Need a query!*_\nExample: .llama4maverick Tell me a joke");
 
     try {
-        const text = await deepChat(prompt, 'llama4maverick');
+        const text = await deepChat(prompt, 'llama-4-maverick');
         await message.client.sendMessage(message.jid, { text, contextInfo }, { quoted: message.data });
     } catch (err) {
         await message.reply(`❌ Error: ${err.message}`);
@@ -130,7 +130,7 @@ izumi({
     if (!prompt) return await message.reply("_*Need a query!*_\nExample: .deepseek Translate this sentence");
 
     try {
-        const text = await deepChat(prompt, 'deepseek');
+        const text = await deepChat(prompt, 'deepseek-r1');
         await message.client.sendMessage(message.jid, { text, contextInfo }, { quoted: message.data });
     } catch (err) {
         await message.reply(`❌ Error: ${err.message}`);
@@ -147,7 +147,7 @@ izumi({
     if (!prompt) return await message.reply("_*Need a query!*_\nExample: .qwq Hi there!");
 
     try {
-        const text = await deepChat(prompt, 'qwq');
+        const text = await deepChat(prompt, 'qwq-32b');
         await message.client.sendMessage(message.jid, { text, contextInfo }, { quoted: message.data });
     } catch (err) {
         await message.reply(`❌ Error: ${err.message}`);
