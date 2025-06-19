@@ -19,7 +19,7 @@ const contextInfo = {
 };
 
 izumi({
-    pattern: '^qwen3 ?(.*)',
+    pattern: 'qwen3 ?(.*)',
     fromMe: mode,
     desc: 'AI Chat (qwen-3-235b)',
     type: 'ai',
@@ -79,7 +79,7 @@ izumi({
     if (!prompt) return await message.reply("_*Need a query!*_\nExample: .minigpt4o How are you?");
 
     try {
-        const text = await deepChat(prompt, 'gpt4o-mini');
+        const text = await deepChat(prompt, 'gpt-4o-mini');
         await message.client.sendMessage(message.jid, { text, contextInfo }, { quoted: message.data });
     } catch (err) {
         await message.reply(`❌ Error: ${err.message}`);
