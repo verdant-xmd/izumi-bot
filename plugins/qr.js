@@ -9,7 +9,7 @@ izumi({
   fromMe: mode,
   desc: 'Enhance an image',
   type: 'tools'
-}, async (m) => {
+}, async (m, message) => {
   if (!m.quoted || !m.quoted.image) {
     return m.reply("Please reply to an *image*.");
   }
