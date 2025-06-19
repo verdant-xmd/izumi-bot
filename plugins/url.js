@@ -1,4 +1,4 @@
-const { izumi, mode, blackVideo, parsedUrl } = require("../lib/");
+const { izumi, mode, blackVideo } = require("../lib/");
 const axios = require("axios");
 const fs = require("fs");
 const FormData = require("form-data");
@@ -7,7 +7,7 @@ const crypto = require("crypto");
 izumi({
   pattern: 'url ?(.*)',
   fromMe: mode,
-  desc: 'Upload files to Catbox.moe (fallback to personal CDN)',
+  desc: 'Upload files to cdn.vioo.my.id (with fallback)',
   type: 'generator'
 }, async (m, text) => {
   if (!m.quoted || !(m.quoted.image || m.quoted.video || m.quoted.audio)) {
@@ -27,56 +27,58 @@ izumi({
       ext = 'mp4';
       filename = 'temp.mp4';
       fs.writeFileSync(filename, mediaBuffer);
-      formData.append('reqtype', 'fileupload');
-      formData.append('fileToUpload', fs.createReadStream(filename), {
+      formData.append('file', fs.createReadStream(filename), {
         filename,
         contentType: 'video/mp4'
       });
     } else {
       mediaBuffer = await m.quoted.download('buffer');
+      if (mediaBuffer.length > 50 * 1024 * 1024) return m.reply('Max file size is 50MB.');
+
       if (m.quoted.image) {
         ext = 'png';
-        filename = 'upload.png';
-        formData.append('fileToUpload', mediaBuffer, {
+        filename = `upload_${Date.now()}.png`;
+        formData.append('file', mediaBuffer, {
           filename,
           contentType: 'image/png'
         });
       } else {
         ext = 'mp4';
-        filename = 'video.mp4';
-        formData.append('fileToUpload', mediaBuffer, {
+        filename = `upload_${Date.now()}.mp4`;
+        formData.append('file', mediaBuffer, {
           filename,
           contentType: 'video/mp4'
         });
       }
-      formData.append('reqtype', 'fileupload');
     }
 
     try {
-      const catboxRes = await axios.post('https://catbox.moe/user/api.php', formData, {
-        headers: formData.getHeaders()
+      const { data } = await axios.post('https://cdn.vioo.my.id/upload', formData, {
+        headers: {
+          ...formData.getHeaders(),
+          'Accept': 'application/json'
+        }
       });
 
-      const fileUrl = catboxRes.data.trim();
-
-      if (!fileUrl.startsWith('http')) {
-        throw new Error('Catbox error: ' + fileUrl);
+      if (data?.data?.url) {
+        await m.reply(data.data.url);
+      } else {
+        throw new Error('Upload failed: No URL returned.');
       }
 
-      await m.reply(fileUrl);
-    } catch (catboxErr) {
+    } catch (uploadErr) {
       const hash = crypto.createHash('sha256').update(mediaBuffer).digest('hex');
       const fallbackFilename = `${hash}.${ext}`;
       const base64Content = mediaBuffer.toString('base64');
 
-      const res = await axios.post('https://cdn.eypz.ct.ws/upload', {
+      const fallbackRes = await axios.post('https://cdn.eypz.ct.ws/upload', {
         base64: base64Content,
         ext,
         filename: fallbackFilename
       });
 
-      if (res.data?.url) {
-        await m.reply(res.data.url);
+      if (fallbackRes.data?.url) {
+        await m.reply(fallbackRes.data.url);
       } else {
         await m.reply("Fallback upload failed: No URL returned.");
       }
@@ -86,7 +88,7 @@ izumi({
 
   } catch (err) {
     const errorMsg = err.response?.data?.message || err.message || 'Upload failed.';
-    await m.reply(`Upload failed`);
+    await m.reply('Upload failed.');
   }
 });
 
