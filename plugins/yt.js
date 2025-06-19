@@ -3,8 +3,9 @@ const yts = require("yt-search");
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
+const config = require("../config")
 const { exec } = require("child_process");
-const { izumi, mode, play, sendYtResults, sendSpotifyResults } = require("../lib");
+const { izumi, mode, play, sendSpotifyResults } = require("../lib");
 
 async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
   try {
@@ -228,7 +229,34 @@ izumi({
     type: 'search'
 }, async (message, match, client) => {
     if (!match) return await message.reply('Please provide a search query.');
-    await sendYtResults(match, message.jid, client, message.data);
+    const fek = await yts(match);
+if (!fek.videos.length) {
+    return await client.sendMessage(message.jid, { text: "No videos found." }, { quoted: message.data });
+}
+
+let formattedMessage = '';
+fek.videos.slice(0, 10).forEach((video, i) => {
+    formattedMessage += `*${i + 1}. ${video.title}*\nChannel: ${video.author.name}\nURL: ${video.url}\n\n`;
+});
+
+const firstVideo = fek.videos[0];
+const thumbnailUrl = firstVideo.thumbnail;
+
+await client.sendMessage(message.jid, {
+    text: formattedMessage,
+    contextInfo: {
+        externalAdReply: {
+            title: "YouTube Search Results",
+            body: config.BOT_NAME,
+            mediaType: 1,
+            thumbnailUrl: thumbnailUrl,
+            mediaUrl: firstVideo.url,
+            sourceUrl: firstVideo.url,
+            showAdAttribution: false,
+            renderLargerThumbnail: true
+        }
+    }
+}, { quoted: message.data });
 });
 izumi({
     pattern: 'sps ?(.*)',
