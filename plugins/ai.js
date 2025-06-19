@@ -35,7 +35,6 @@ izumi({
     }
 });
 
-// gpt41
 izumi({
     pattern: '41gpt ?(.*)',
     fromMe: mode,
@@ -53,7 +52,6 @@ izumi({
     }
 });
 
-// gpt4o
 izumi({
     pattern: '4ogpt ?(.*)',
     fromMe: mode,
@@ -71,7 +69,6 @@ izumi({
     }
 });
 
-// minigpt4o
 izumi({
     pattern: 'minigpt4o ?(.*)',
     fromMe: mode,
@@ -89,7 +86,6 @@ izumi({
     }
 });
 
-// llama4scout
 izumi({
     pattern: 'llama4scout ?(.*)',
     fromMe: mode,
@@ -107,7 +103,6 @@ izumi({
     }
 });
 
-// llama4maverick
 izumi({
     pattern: 'llama4maverick ?(.*)',
     fromMe: mode,
@@ -125,7 +120,6 @@ izumi({
     }
 });
 
-// deepseek
 izumi({
     pattern: 'deepseek ?(.*)',
     fromMe: mode,
@@ -143,7 +137,6 @@ izumi({
     }
 });
 
-// qwq
 izumi({
     pattern: 'qwq ?(.*)',
     fromMe: mode,
@@ -160,7 +153,7 @@ izumi({
         await message.reply(`❌ Error: ${err.message}`);
     }
 });
-// Ghibli
+
 izumi({
     pattern: 'ghibli ?(.*)',
     fromMe: mode,
@@ -182,7 +175,6 @@ izumi({
     }
 });
 
-// Cyberpunk
 izumi({
     pattern: 'cyberpunk ?(.*)',
     fromMe: mode,
@@ -204,7 +196,6 @@ izumi({
     }
 });
 
-// Anime
 izumi({
     pattern: 'anime ?(.*)',
     fromMe: mode,
@@ -226,7 +217,6 @@ izumi({
     }
 });
 
-// Chibi
 izumi({
     pattern: 'chibi ?(.*)',
     fromMe: mode,
@@ -248,7 +238,6 @@ izumi({
     }
 });
 
-// Pixel Art
 izumi({
     pattern: 'pixelart ?(.*)',
     fromMe: mode,
@@ -270,7 +259,6 @@ izumi({
     }
 });
 
-// Oil Painting
 izumi({
     pattern: 'oilpainting ?(.*)',
     fromMe: mode,
@@ -292,7 +280,6 @@ izumi({
     }
 });
 
-// 3D
 izumi({
     pattern: '3d ?(.*)',
     fromMe: mode,
@@ -314,7 +301,6 @@ izumi({
     }
 });
 
-// Realism (default)
 izumi({
     pattern: 'deepimg ?(.*)',
     fromMe: mode,
@@ -377,13 +363,13 @@ await client.sendMessage(
         body: "Powered by Eypz API",
         mediaType: 2,
         thumbnailUrl: "https://files.catbox.moe/saleb0.png",
-        showAdAttribution: true,
-        mediaUrl: "https://eypz.rf.gd",
-        sourceUrl: "https://eypz.rf.gd"
+        showAdAttribution: false,
+        mediaUrl: "https://api.eypz.ct.ws",
+        sourceUrl: "https://api.eypz.ct.ws"
       }
     }
   },
-  { quoted: quotedMessage }
+  { quoted: message.data }
 )
 });
 izumi({
@@ -427,13 +413,13 @@ await client.sendMessage(
         body: "Powered by Eypz API",
         mediaType: 2,
         thumbnailUrl: "https://files.catbox.moe/saleb0.png",
-        showAdAttribution: true,
-        mediaUrl: "https://eypz.rf.gd",
-        sourceUrl: "https://eypz.rf.gd"
+        showAdAttribution: false,
+        mediaUrl: "https://api.eypz.ct.ws",
+        sourceUrl: "https://api.eypz.ct.ws"
       }
     }
   },
-  { quoted: quotedMessage }
+  { quoted: message.data }
 )
 });
 izumi({
@@ -456,7 +442,7 @@ await message.client.sendMessage(
         mediaType: 2,
         thumbnailUrl: "https://files.catbox.moe/1z6pjq.png",
         renderLargerThumbnail: false,
-        showAdAttribution: true,
+        showAdAttribution: false,
         sourceUrl: "https://api.eypz.ct.ws"
       }
     }
