@@ -3,21 +3,18 @@ const axios = require("axios");
 const fs = require("fs");
 const FormData = require("form-data");
 const config = require("../config");
-
 izumi({
   pattern: 'enhance$',
   fromMe: mode,
   desc: 'Enhance an image',
   type: 'tools'
-}, async (m, message) => {
+}, async (m) => {
   if (!m.quoted || !m.quoted.image) {
     return m.reply("Please reply to an *image*.");
   }
-
   try {
     const imageBuffer = await m.quoted.download('buffer');
     if (imageBuffer.length > 50 * 1024 * 1024) return m.reply('Max file size is 50MB.');
-
     const filename = `upload_${Date.now()}.png`;
     const formData = new FormData();
     formData.append('file', imageBuffer, {
@@ -30,31 +27,26 @@ izumi({
         'Accept': 'application/json'
       }
     });
-
     const fileUrl = uploadRes?.data?.data?.url;
     if (!fileUrl) return m.reply('Upload failed. Try again later.');
     const enhanceUrl = `https://bk9.fun/tools/enhance?url=https://apis.davidcyriltech.my.id/remini?url=${encodeURIComponent(fileUrl)}`;
-
-    
     const finalImage = await axios.get(enhanceUrl, { responseType: 'arraybuffer' });
-    await message.client.sendMessage(m.jid, {
+    await m.client.sendMessage(m.jid, {
       image: finalImage.data,
       caption: config.CAPTION || '',
-    }, { quoted: message.data });
-
-    await message.client.sendMessage(m.jid, {
+    }, { quoted: m.data });
+    await m.client.sendMessage(m.jid, {
       document: finalImage.data,
       fileName: `enhanced_${Date.now()}.jpg`,
       mimetype: 'image/jpeg',
-      caption: config.CAPTION,
-    }, { quoted: message.data });
+      caption: `quotes: ${m.quoted?.text || ''}`,
+    }, { quoted: m.data });
 
   } catch (err) {
     console.error(err);
-    message.reply('Something went wrong! Please try again later.');
+    m.reply('Something went wrong! Please try again later.');
   }
 });
-
 izumi(
   {
     pattern: "qr ?(.*)",
