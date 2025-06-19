@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const { exec } = require("child_process");
-const { izumi, mode, searchAndSendYouTubeOptions, sendYtResults, sendSpotifyResults } = require("../lib");
+const { izumi, mode, play, sendYtResults, sendSpotifyResults } = require("../lib");
 
 async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
   try {
@@ -212,12 +212,13 @@ izumi({
 });
 
 izumi({
-  pattern: "play ?(.*)",
+  pattern: 'play ?(.*)',
   fromMe: mode,
-  desc: "Search YouTube and provide quick options.",
-  type: "downloader",
-}, async (message, match) => {
-  await searchAndSendYouTubeOptions(message.client, message.jid, message.sender, match);
+  desc: 'Search and download',
+  type: 'downloader'
+}, async (message, match, client) => {
+  const query = match;
+  await play(message, query, client);
 });
 
 izumi({
