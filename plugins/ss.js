@@ -1,4 +1,4 @@
-const { izumi, mode, getUrl } = require("../lib/");
+const { izumi, mode } = require("../lib/");
 const config = require("../config");
 
 izumi(
@@ -11,10 +11,8 @@ izumi(
     async (message, match, m) => {
         try {
             match = match || message.reply_message.text;
-            if (!match) return await message.reply(`*_Need a link_*\n*eg:- .fullss https://github.com/sataniceypz/Izumi-v3*`);
-            let url = await getUrl(match);
-            let res = apiUrl + `api/screenshot?url=${url}&type=phone&full=true&apikey=maskser`;
-            await message.sendFromUrl(res);
+            if (!match) return await message.reply(`*_Need a link_*\n*eg:- .fullss https://api.eypz.ct.ws*`);
+            await message.sendFromUrl(`https://api.eypz.ct.ws/api/screenshot?url=${match}`);
         } catch (error) {
             await message.reply('Failed to capture screenshot.');
         }
@@ -31,10 +29,8 @@ izumi(
     async (message, match, m) => {
         try {
             match = match || message.reply_message.text;
-            if (!match) return await message.reply(`*_Need a link_*\n*eg:- .ss https://github.com/sataniceypz/Izumi-v3*`);
-            let url = await getUrl(match);
-            let res = apiUrl + `api/screenshot?url=${url}&type=desktop&full&apikey=maskser`;
-            await message.sendFromUrl(res);
+            if (!match) return await message.reply(`*_Need a link_*\n*eg:- .ss https://api.eypz.ct.ws*`);
+            await message.sendFromUrl(`https://api.eypz.ct.ws/api/screenshot?url=${match}&size=mobile`);
         } catch (error) {
             await message.reply('Failed to capture screenshot.');
         }
