@@ -1,4 +1,4 @@
-const { izumi, mode, blackVideo } = require("../lib/");
+const { izumi, mode, blackVideo, parsedUrl } = require("../lib/");
 const axios = require("axios");
 const fs = require("fs");
 const FormData = require("form-data");
