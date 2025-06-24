@@ -68,3 +68,88 @@ izumi({
         await message.reply(" 'error' ");
     }
 });
+
+izumi({
+  pattern: 'tiktok ?(.*)',
+  fromMe: mode,
+  desc: 'tiktok Downloader',
+  type: 'downloader'
+}, async (message, match, client) => {
+
+    const query = match || '';
+    if (!query.trim()) {
+        return await client.sendMessage(
+            message.jid,
+            { text: "Need a URL to download.\nExample: .tiktok https://tiktok.com/..." },
+            { quoted: message.data }
+        );
+    }
+
+    try {
+        const res = await axios.get(`https://api.eypz.ct.ws/api/dl/tiktok?url=${encodeURIComponent(query)}`);
+        const data = res.data;
+
+        if (data.status !== 'success' || !data.result) {
+            return await client.sendMessage(
+                message.jid,
+                { text: "No result found." },
+                { quoted: message.data }
+            );
+        }
+
+        const result = data.result;
+
+        if (result.type === 'video') {
+            const replyText = `
+*${result.title}*
+
+Reply with:
+1. SD
+2. HD
+            `.trim();
+
+            const sentMsg = await client.sendMessage(
+                message.jid,
+                { text: replyText },
+                { quoted: message.data }
+            );
+
+            client.ev.on('messages.upsert', async (msg) => {
+                const newMessage = msg.messages[0];
+                if (
+                    newMessage.key.remoteJid === message.jid &&
+                    newMessage.message?.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id
+                ) {
+                    const userReply = newMessage.message?.conversation || newMessage.message?.extendedTextMessage?.text;
+
+                    if (userReply === '1') {
+                        await message.sendFromUrl(result.video_sd, { caption: result.title });
+                    } else if (userReply === '2') {
+                        await message.sendFromUrl(result.video_hd, { caption: result.title });
+                    }
+                }
+            });
+
+        } else if (result.type === 'photo' && result.images?.length) {
+
+            for (const img of result.images) {
+                await message.sendFromUrl(img, { caption: result.title });
+            }
+
+        } else {
+            await client.sendMessage(
+                message.jid,
+                { text: "Unsupported type or no media found." },
+                { quoted: message.data }
+            );
+        }
+
+    } catch (error) {
+        console.error(error);
+        return await client.sendMessage(
+            message.jid,
+            { text: "Something went wrong. Please try again later." },
+            { quoted: message.data }
+        );
+    }
+});
