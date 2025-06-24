@@ -275,9 +275,7 @@ izumi({
   type: 'downloader'
 }, async (message, match, client) => {
   const res = await axios.get(`https://api.eypz.ct.ws/api/dl/spotify?url=${match}`);
-  const dl = res.data.result.stream_url;
-  const info = res.data.result;
-
+  const dl = res.data.download;
   await message.client.sendMessage(message.jid, {
     audio: {
       url: dl
@@ -287,13 +285,13 @@ izumi({
       forwardingScore: 999,
       isForwarded: true,
       externalAdReply: {
-        title: info.title,
-        body: info.artist,
-        thumbnailUrl: info.thumbnail,
+        title: res.data.title,
+        body: res.data.artist,
+        thumbnailUrl: res.data.thumbnail,
         mediaType: 2,
         mediaUrl: match,
         sourceUrl: match
       }
     }
-  }, { quoted: message.data });
+  },{ quoted: message.data });
 });
