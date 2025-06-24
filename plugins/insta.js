@@ -197,3 +197,98 @@ izumi({
         );
     }
 });
+
+
+izumi({
+  pattern: 'twitter ?(.*)',
+  fromMe: mode,
+  desc: 'Twitter downloader',
+  type: 'downloader'
+}, async (message, match, client) => {
+
+    const query = match || '';
+    if (!query.trim()) {
+        return await client.sendMessage(
+            message.jid,
+            { text: "Need a Twitter URL.\nExample: .twitter https://x.com/..." },
+            { quoted: message.data }
+        );
+    }
+
+    try {
+        const res = await axios.get(`https://api.eypz.ct.ws/api/dl/twitter?url=${encodeURIComponent(query)}`);
+        const data = res.data;
+
+        if (data.status !== 'success' || !data.result?.length) {
+            return await client.sendMessage(
+                message.jid,
+                { text: "No media found." },
+                { quoted: message.data }
+            );
+        }
+
+        if (data.type === 'video') {
+            const videoQualities = data.result.filter(item => item.quality.toLowerCase() !== 'original');
+
+            if (!videoQualities.length) {
+                return await client.sendMessage(
+                    message.jid,
+                    { text: "No valid video qualities found." },
+                    { quoted: message.data }
+                );
+            }
+
+            let response = "*Choose Quality:*\n\n";
+            videoQualities.forEach((item, index) => {
+                response += `${index + 1}. ${item.quality}\n`;
+            });
+
+            const sentMsg = await client.sendMessage(
+                message.jid,
+                { text: response.trim() + `\n\nReply with: 1 / 2 / 3 ...` },
+                { quoted: message.data }
+            );
+
+            client.ev.on('messages.upsert', async (msg) => {
+                const newMessage = msg.messages[0];
+                if (
+                    newMessage.key.remoteJid === message.jid &&
+                    newMessage.message?.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id
+                ) {
+                    const userReply = newMessage.message?.conversation || newMessage.message?.extendedTextMessage?.text;
+                    const choice = parseInt(userReply.trim());
+
+                    if (choice > 0 && choice <= videoQualities.length) {
+                        const selected = videoQualities[choice - 1];
+                        await message.sendFromUrl(selected.downloadUrl, { caption: config.CAPTION });
+                    } else {
+                        await client.sendMessage(
+                            message.jid,
+                            { text: "Invalid choice." },
+                            { quoted: message.data }
+                        );
+                    }
+                }
+            });
+
+        } else if (data.type === 'image') {
+            for (const img of data.result) {
+                await message.sendFromUrl(img.downloadUrl, { caption: config.CAPTION });
+            }
+        } else {
+            await client.sendMessage(
+                message.jid,
+                { text: "Unsupported type." },
+                { quoted: message.data }
+            );
+        }
+
+    } catch (error) {
+        console.error(error);
+        return await client.sendMessage(
+            message.jid,
+            { text: "Something went wrong. Please try again later." },
+            { quoted: message.data }
+        );
+    }
+});
