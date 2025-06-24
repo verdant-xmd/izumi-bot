@@ -1,5 +1,6 @@
 const { izumi, mode } = require("../lib");
 const axios = require("axios");
+const config = require('../config')
 
 izumi({
     pattern: 'insta ?(.*)',
@@ -123,9 +124,9 @@ Reply with:
                     const userReply = newMessage.message?.conversation || newMessage.message?.extendedTextMessage?.text;
 
                     if (userReply === '1') {
-                        await message.sendFromUrl(result.video_sd, { caption: result.title });
+                        await message.sendFromUrl(result.video_sd, { caption: result.CAPTION });
                     } else if (userReply === '2') {
-                        await message.sendFromUrl(result.video_hd, { caption: result.title });
+                        await message.sendFromUrl(result.video_hd, { caption: config.CAPTION });
                     }
                 }
             });
@@ -133,7 +134,7 @@ Reply with:
         } else if (result.type === 'photo' && result.images?.length) {
 
             for (const img of result.images) {
-                await message.sendFromUrl(img, { caption: result.title });
+                await message.sendFromUrl(img, { caption: config.CAPTION});
             }
 
         } else {
@@ -142,6 +143,49 @@ Reply with:
                 { text: "Unsupported type or no media found." },
                 { quoted: message.data }
             );
+        }
+
+    } catch (error) {
+        console.error(error);
+        return await client.sendMessage(
+            message.jid,
+            { text: "Something went wrong. Please try again later." },
+            { quoted: message.data }
+        );
+    }
+});
+
+
+izumi({
+  pattern: 'threads ?(.*)',
+  fromMe: mode,
+  desc: 'Threads downloader',
+  type: 'downloader'
+}, async (message, match, client) => {
+
+    const query = match || '';
+    if (!query.trim()) {
+        return await client.sendMessage(
+            message.jid,
+            { text: "Need a URL to download.\nExample: .threads https://www.threads.net/..." },
+            { quoted: message.data }
+        );
+    }
+
+    try {
+        const res = await axios.get(`https://api.eypz.ct.ws/api/dl/threads?url=${encodeURIComponent(query)}`);
+        const data = res.data;
+
+        if (data.status !== 'success' || !data.downloadUrls?.length) {
+            return await client.sendMessage(
+                message.jid,
+                { text: "No media found." },
+                { quoted: message.data }
+            );
+        }
+
+        for (const url of data.downloadUrls) {
+            await message.sendFromUrl(url, { caption: config.CAPTION });
         }
 
     } catch (error) {
