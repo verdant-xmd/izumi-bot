@@ -5,7 +5,7 @@ const path = require("path");
 const sharp = require("sharp");
 const config = require("../config")
 const { exec } = require("child_process");
-const { izumi, mode, play, sendSpotifyResults } = require("../lib");
+const { izumi, mode, play } = require("../lib");
 
 async function downloadAndSendVideo(message, client, videoUrl, title, videoId) {
   try {
@@ -259,13 +259,67 @@ await client.sendMessage(message.jid, {
 }, { quoted: message.data });
 });
 izumi({
-    pattern: 'sps ?(.*)',
-    fromMe: mode,
-    desc: 'Spotify search ',
-    type: 'search'
+  pattern: 'sps ?(.*)',
+  fromMe: mode,
+  desc: 'Spotify search',
+  type: 'search'
 }, async (message, match, client) => {
-    if (!match) return await message.reply('Please provide a search query.');
-    await sendSpotifyResults(match, message.jid, client, message.data);
+
+    const query = match || '';
+    if (!query.trim()) {
+        return await client.sendMessage(
+            message.jid,
+            { text: "Need a query.\nExample: .spotify LUNA BALA -Slowed" },
+            { quoted: message.data }
+        );
+    }
+
+    try {
+        const res = await axios.get(`https://api.eypz.ct.ws/api/search/spotify?q=${encodeURIComponent(query)}`);
+        const data = res.data;
+
+        if (!data.results || !data.results.length) {
+            return await client.sendMessage(
+                message.jid,
+                { text: "No tracks found." },
+                { quoted: message.data }
+            );
+        }
+
+        const first = data.results[0];
+        const thumbRes = await axios.get(`https://api.eypz.ct.ws/api/dl/spotify?url=${first.track_url}`);
+        const thumb = thumbRes.data.thumbnail;
+
+        let formattedMessage = '';
+        data.results.slice(0, 10).forEach((track, i) => {
+            formattedMessage += `*${i + 1}. ${track.track_name}*\nArtist: ${track.artist_name}\nURL: ${track.track_url}\n\n`;
+        });
+
+        const msg = {
+            text: formattedMessage.trim(),
+            contextInfo: {
+                externalAdReply: {
+                    title: "Spotify Search Results",
+                    body: `${query} | Powered by ${config.BOT_NAME}`,
+                    thumbnailUrl: thumb,
+                    mediaType: 1,
+                    renderLargerThumbnail: true,
+                    showAdAttribution: false,
+                    sourceUrl: first.track_url
+                }
+            }
+        };
+
+        await client.sendMessage(message.jid, msg, { quoted: message.data });
+
+    } catch (error) {
+        console.error(error);
+        return await client.sendMessage(
+            message.jid,
+            { text: "Something went wrong. Please try again later." },
+            { quoted: message.data }
+        );
+    }
 });
 
 izumi({
