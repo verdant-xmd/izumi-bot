@@ -167,7 +167,7 @@ izumi(
         pattern: "explugins",
         fromMe: true,
         desc: "get external plugins",
-        type: "users",
+        type: "user",
     },
     async (message, client) => {
         const res = await axios.get('https://raw.githubusercontent.com/Akshay-Eypz/IZUMI-EXPLUGINS/refs/heads/main/plugin.json');
